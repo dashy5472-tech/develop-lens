@@ -162,9 +162,6 @@
   .drop .big{ font-weight:650; font-size:var(--t-lg); }
   .drop .sm{ font-size:var(--t-md); color:var(--muted); }
 
-  .or{ display:flex; align-items:center; gap:12px; color:var(--muted); font-size:var(--t-sm); letter-spacing:.08em; }
-  .or::before,.or::after{ content:""; flex:1; height:1px; background:var(--rule); }
-
   textarea{
     width:100%; min-height:96px; resize:vertical; font-family:inherit; font-size:var(--t-md); line-height:1.6;
     background:var(--surface); color:var(--ink); border:1px solid var(--rule-2); border-radius:3px; padding:10px 12px;
@@ -617,9 +614,6 @@
       <input type="file" id="file" accept=".xlsx,.xls,.csv,.txt,.tsv" multiple hidden>
       <div class="filelist" id="fileList" hidden></div>
       <div class="actions"><button class="btn ghost sm" id="addBtn" type="button" hidden>파일 더하기</button></div>
-      <div class="or">또는</div>
-      <textarea id="paste" placeholder="엑셀에서 열을 복사해 붙여넣으세요. 번호와 내용이 탭으로 구분된 형태면 자동으로 인식합니다."></textarea>
-      <div class="actions"><button class="btn ghost sm" id="pasteBtn" type="button">붙여넣은 내용 읽기</button></div>
       <div id="msg"></div>
     </section>
 
@@ -1103,13 +1097,6 @@ drop.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' '){ e.pre
 drop.addEventListener('drop', e => addFiles(e.dataTransfer.files));
 fileEl.addEventListener('change', e => { addFiles(e.target.files); e.target.value = ''; });
 $('#addBtn').addEventListener('click', () => fileEl.click());
-$('#pasteBtn').addEventListener('click', () => {
-  const t = $('#paste').value.trim();
-  if (!t) return say('붙여넣은 내용이 없습니다.', 'err');
-  state.src = [{ name:'붙여넣은 내용', grid: parseDelimited(t) }];
-  rebuild();
-});
-
 /* 나이스는 과목·반 단위로만 파일을 뽑아 준다. 네 반을 가르치면 파일도 네 개다.
    합치는 일은 사람이 아니라 여기서 한다. 이미 읽은 파일 뒤에 계속 더할 수 있다. */
 async function addFiles(fileList){
@@ -1338,7 +1325,7 @@ function parseXlsx(buf){
       s.onload = res;
       s.onerror = () => rej(new Error(
         '엑셀 해석 라이브러리를 불러오지 못했습니다. 학교 네트워크가 막고 있을 수 있습니다. ' +
-        '엑셀에서 "다른 이름으로 저장 → CSV" 로 바꿔 올리시거나, 열을 복사해 붙여넣기를 써주세요.'));
+        '엑셀에서 "다른 이름으로 저장 → CSV" 로 바꿔 올려 주세요.'));
       document.head.appendChild(s);
     });
   }
@@ -1562,7 +1549,7 @@ $('#reset').addEventListener('click', () => {
   $('#mapStep').hidden = true; $('#fileChip').hidden = true;
   $('#fileList').hidden = true; $('#addBtn').hidden = true;
   $('#sampleFlag').hidden = true; $('#tourBtn').hidden = true;
-  $('#paste').value = ''; fileEl.value = '';
+  fileEl.value = '';
   say('', '');
 });
 

@@ -78,8 +78,9 @@ chk('스크립트가 끝까지 실행된다', !boom);
 /* 끝까지 갔다면 단추들이 실제로 연결돼 있어야 한다.
    중간에 멈추면 그 아래 것들만 조용히 빠지므로 뒤쪽 단추까지 확인한다. */
 const WIRED = ['run','sampleBtn','tourBtn','reset','exportBtn','editBtn','saveBtn',
-               'cancelBtn','copyBtn','revertBtn','pasteBtn','addBtn','drop',
-               'tourNext','tourPrev','tourQuit','spinBtn','netReset','colText'];
+               'cancelBtn','copyBtn','revertBtn','addBtn','drop',
+               'tourNext','tourPrev','tourQuit','spinBtn','netReset','colText',
+               'showName','commonList','minSpan','commonPct','limitSel'];
 const dead = WIRED.filter(id => !listeners.has(id + ':click') &&
                                 !listeners.has(id + ':change') &&
                                 !listeners.has(id + ':input'));
