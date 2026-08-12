@@ -129,6 +129,36 @@ chk('같은 구실의 열이 두 개면 뒤엣것은 따로 둔다',   // 내용
     src[1].map[2] === tc && src[1].map[5] !== tc);
 chk('되돌릴 때 그 파일의 원래 세특 열을 찾을 수 있다', src[1].map.indexOf(tc) === 2);
 
+/* ── 9. 0행은 언제나 머리글이다 ────────────────────────────
+   화면이 첫 행을 데이터로 취급할 수 있게 두었을 때, 머리글이 학생 한 명으로
+   섞여 들어갔다. "세부능력 및 특기사항" 이 11자라 10자 걸러내기를 통과했기 때문이다.
+   합치는 쪽에서 0행을 늘 머리글로 만들어 두면 그 선택지 자체가 필요 없다. */
+const grids = [
+  [{ name:'a.xlsx', grid:[HEAD, row(1,1,'가','대수',T('X1'))] }],
+  [{ name:'b.csv',  grid:[row(1,1,'가','대수',T('Y1')), row(1,2,'나','대수',T('Y2'))] }],
+  [{ name:'c.xlsx', grid:[
+      ['','','neis 바이트 계산기','','','',''],
+      ['','','','','','',''],
+      ['학번','이름','내용','전체글자수','바이트변환','줄바꿈','교과세특'],
+      ['3215','다', T('Z1'), '310','531','0','750'] ] }],
+];
+let headerNeverData = true;
+for (const src9 of grids){
+  const mm = M.mergeSources(src9);
+  const first = mm.grid[0];
+  // 0행에는 학생 기록이 있으면 안 된다 — 긴 글이 있으면 데이터가 섞인 것이다
+  const longest = Math.max(0, ...first.map(v => String(v).length));
+  if (longest >= 20) headerNeverData = false;
+  // 그리고 0행은 rowRef 가 없어야 한다 (어느 파일의 몇 행도 아니다)
+  if (mm.rowRef[0] !== null) headerNeverData = false;
+}
+chk('어떤 파일이 와도 0행은 머리글이고 학생 기록이 아니다', headerNeverData);
+chk('0행을 건너뛰면 학생 수가 맞는다', (() => {
+  const mm = M.mergeSources([{ name:'a.xlsx', grid:[HEAD,
+    row(1,1,'가','대수',T('A')), row(1,2,'나','대수',T('B'))] }]);
+  return mm.grid.length - 1 === 2;
+})());
+
 console.log('\n통과 ' + ok.length + ' / ' + (ok.length + fail.length));
 if (fail.length){ fail.forEach(f => console.log('  ✗ ' + f)); process.exit(1); }
 console.log('모두 통과');
