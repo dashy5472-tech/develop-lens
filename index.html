@@ -496,6 +496,22 @@
     .cmp-row{ grid-template-columns:1fr; gap:var(--s2); }
   }
 
+  /* ── 만든 사람 ────────────────────────────────────────── */
+  .made{
+    border-top:1px solid var(--rule); padding-top:var(--s4);
+    display:flex; flex-direction:column; gap:var(--s1);
+    font-size:var(--t-sm); color:var(--muted); line-height:1.7;
+  }
+  .made .who{ font-size:var(--t-md); color:var(--ink-2); }
+  .made .who b{ font-weight:700; color:var(--ink); }
+  .made .who .bar{ color:var(--rule-2); margin:0 4px; }
+  .made .lines{ display:flex; flex-wrap:wrap; gap:7px; align-items:baseline; }
+  .made a{ color:var(--accent); font-weight:600; }
+  .made a:hover{ text-decoration:underline; }
+  .made a:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; border-radius:2px; }
+  .made code{ font-family:ui-monospace,Consolas,monospace; font-size:var(--t-xs);
+              background:var(--surface-2); border-radius:3px; padding:1px 5px; }
+
   /* ── 처음 오신 분 ─────────────────────────────────────── */
   .firsttime{
     display:flex; align-items:center; gap:var(--s4); flex-wrap:wrap;
@@ -632,6 +648,19 @@
       </div>
       <div class="actions"><button class="btn" id="run" type="button">분석 시작</button></div>
     </section>
+
+    <!-- 소스 링크는 장식이 아니다. "브라우저 밖으로 안 나간다" 는 말은
+         코드를 열어 볼 수 있어야 믿을 수 있는 종류의 주장이다. -->
+    <footer class="made">
+      <div class="who">강릉문성고등학교 <span class="bar">|</span> by. <b>김주영</b></div>
+      <div class="lines">
+        <a href="https://github.com/dashy5472-tech/develop-lens" target="_blank" rel="noopener">코드 보기</a>
+        <span>·</span>
+        <span>자유롭게 쓰고 나눠 주세요</span>
+      </div>
+      <div class="lines">올린 파일은 이 브라우저 안에서만 열리고 어디에도 저장되지 않습니다.
+        정말 그런지는 위 코드에서 <code>fetch</code> 를 찾아보시면 됩니다 — 한 번도 나오지 않습니다.</div>
+    </footer>
   </div>
 </main>
 
