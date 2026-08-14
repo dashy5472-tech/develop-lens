@@ -1,0 +1,128 @@
+/* 내보내기 검사 — 결과 Excel 과 학생별 PDF. (배포에 들어가지 않는다)
+
+     node _test_export.js
+
+   나이스에 되올릴 파일은 만들지 않는다. 교사가 확인할 Excel 과 PDF 두 개가 전부다.
+   그래서 이 둘이 깨지면 앱이 하는 일의 절반이 없어진다.
+
+   읽기 방식을 바꾸면서 '원본 행' 이 숫자에서 '12·17' 같은 글자로, '반/번호' 가
+   '2학년 3반' + '1' 에서 '3/1' 로 바뀌었다. 내보내기가 그걸 그대로 받는지 본다.
+
+   학생 이름과 세특 원문은 찍지 않는다 — 모양과 개수만 본다. */
+const fs = require('fs');
+const path = require('path');
+const { APP, loadXLSX, loadNEIS } = require('./_lib.js');
+
+const FILE = path.join(process.env.USERPROFILE || '', 'OneDrive', 'Desktop', '전 과목 세특.xlsx');
+if (!fs.existsSync(FILE)) {
+  console.log('건너뜀 — 파일 없음: ' + FILE);
+  process.exit(0);
+}
+
+const XLSX = loadXLSX();
+const NEIS = loadNEIS();
+
+/* 파일로 떨어뜨리지 않고 가로챈다. */
+let written = null;
+const xlsxForApp = Object.create(XLSX);
+xlsxForApp.utils = XLSX.utils;
+xlsxForApp.writeFile = (workbook, name) => { written = { workbook, name }; };
+
+const stub = () => ({
+  hidden:false, open:false, value:'', textContent:'', innerHTML:'', checked:false, className:'',
+  style:{}, dataset:{}, disabled:false, max:'',
+  classList:{ add(){}, remove(){}, toggle(){}, contains(){ return false; } },
+  addEventListener(){}, setAttribute(){}, getAttribute(){ return null; },
+  querySelector(){ return null; }, querySelectorAll(){ return []; },
+  appendChild(){}, remove(){}, focus(){}, click(){}, scrollIntoView(){}, closest(){ return null; }
+});
+const document = {
+  body:stub(), head:stub(), documentElement:stub(),
+  getElementById(){ return stub(); }, querySelector(){ return stub(); },
+  querySelectorAll(){ return []; }, createElement(){ return stub(); }, addEventListener(){}
+};
+const window = { requestAnimationFrame(){ return 0; }, setTimeout(){ return 0; }, clearTimeout(){}, print(){}, open(){ return null; }, addEventListener(){} };
+
+const app = new Function(
+  'document','window','XLSX','navigator','location','requestAnimationFrame','setTimeout','clearTimeout','console',
+  APP + '\n;return { analyzeText, getBatchStatus, toClassNumber, foundLabel, exportBatchWorkbook, buildBatchPrintHtml,' +
+        '\n         setResults: value => { batchResults = value; } };'
+)(document, window, xlsxForApp, { userAgent:'node' }, { href:'' }, () => 0, () => 0, () => {}, console);
+
+let pass = 0, fail = 0;
+const ok = (label, cond, detail) => {
+  if (cond) { pass++; console.log('  ok   ' + label); }
+  else { fail++; console.log('  FAIL ' + label + (detail == null ? '' : '  → ' + detail)); }
+};
+
+/* runBatchCheck 가 만드는 모양 그대로 세운다. */
+const parsed = NEIS.parseWorkbook(XLSX, XLSX.read(fs.readFileSync(FILE), { type:'buffer' }));
+const results = parsed.records.map((record, index) => {
+  const analysis = app.analyzeText(record.text);
+  analysis.studentName = record.name;
+  return {
+    resultIndex:index,
+    rowNumber:record.rows.join('·'),
+    classNumber:app.toClassNumber(record) || '-',
+    name:record.name,
+    subject:record.subject || '-',
+    text:record.text,
+    analysis,
+    status:app.getBatchStatus(analysis.counts)
+  };
+});
+app.setResults(results);
+
+console.log('■ 결과 Excel');
+app.exportBatchWorkbook();
+ok('파일을 만든다', !!written, '만들지 않음');
+ok('이름이 세특_사전점검_결과_ 로 시작한다', written && /^세특_사전점검_결과_\d{8}\.xlsx$/.test(written.name), written && written.name);
+
+const sheet = written.workbook.Sheets['점검 결과'];
+ok('“점검 결과” 시트가 있다', !!sheet);
+const grid = XLSX.utils.sheet_to_json(sheet, { header:1, defval:'', blankrows:true });
+ok('머리글 + 206줄', grid.length === 207, grid.length);
+ok('열이 11개다', grid[0].length === 11, grid[0].length);
+ok('머리글이 그대로다',
+  grid[0].join('|') === '원본 행|반/번호|성명|과목|상태|전체|오류|주의|개선 권고|탐지 항목|세특 원문',
+  grid[0].join('|'));
+
+const body = grid.slice(1);
+ok('반/번호가 3/1 꼴이다', body.every(r => /^\d+\/\d+$/.test(String(r[1]))),
+  JSON.stringify(body.map(r => String(r[1])).filter(v => !/^\d+\/\d+$/.test(v)).slice(0, 3)));
+ok('과목이 다 채워져 있다', body.every(r => String(r[3]).trim().length > 0));
+ok('쪽 경계에서 이어 붙인 40건은 원본 행이 두 개다',
+  body.filter(r => String(r[0]).indexOf('·') !== -1).length === 40,
+  body.filter(r => String(r[0]).indexOf('·') !== -1).length);
+ok('세특 원문의 줄바꿈이 살아 있다 (22건)',
+  body.filter(r => String(r[10]).indexOf('\n') !== -1).length === 22,
+  body.filter(r => String(r[10]).indexOf('\n') !== -1).length);
+ok('탐지 항목에 줄바꿈 안내가 들어간다',
+  body.filter(r => /줄바꿈/.test(String(r[9]))).length === 22,
+  body.filter(r => /줄바꿈/.test(String(r[9]))).length);
+/* 공백·줄바꿈을 잡은 항목이 빈칸으로 나가면 무엇을 잡았는지 알 수 없다.
+   가운데점처럼 '·' 자체가 탐지 표현인 경우도 있으니, 눈에 보이는 글자냐만 본다. */
+const blankLabels = results.flatMap(item => item.analysis.issues)
+  .filter(issue => /^\s*$/.test(app.foundLabel(issue)));
+ok('탐지 표현이 빈칸으로 나가는 항목이 없다', blankLabels.length === 0,
+  blankLabels.length + '건 (' + [...new Set(blankLabels.map(i => i.id))].join(', ') + ')');
+ok('무결 항목은 그렇게 적힌다', body.some(r => String(r[9]) === '명확한 위반 미발견'));
+
+console.log('■ 학생별 PDF');
+const flagged = results.filter(item => item.status !== 'clear');
+const html = app.buildBatchPrintHtml(flagged, {
+  totalCount:results.length, excludedCount:results.length - flagged.length, includeClear:false
+});
+ok('HTML 이 나온다', typeof html === 'string' && html.length > 1000, typeof html);
+ok('학생 수만큼 쪽이 나온다',
+  (html.match(/class="student-page/g) || []).length === flagged.length,
+  (html.match(/class="student-page/g) || []).length);
+ok('교차점검 확인란이 들어간다', /교차점검 확인/.test(html));
+ok('세특 원문 자리가 있다', /세특 원문/.test(html));
+ok('줄바꿈을 ↵ 로 보여 준다', html.indexOf('↵') !== -1);
+ok('인쇄 안내가 들어간다', /PDF로 저장/.test(html));
+ok('닫히지 않은 태그로 끝나지 않는다', /<\/html>\s*$/.test(html));
+
+console.log('\n  Excel 207줄 · PDF ' + flagged.length + '쪽 (무결 ' + (results.length - flagged.length) + '건 제외)');
+console.log('\n' + (fail === 0 ? '전체 통과' : '실패 ' + fail + '건') + ' (통과 ' + pass + ')');
+process.exit(fail === 0 ? 0 : 1);
