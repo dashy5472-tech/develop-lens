@@ -53,6 +53,13 @@
        어두울 때 스크롤바·드롭다운만 검게 나와 화면이 따로 논다. */
     color-scheme: light;
 
+    /* 굵기는 400 과 700 두 단만 쓴다.
+       화면에 실제로 나타나는 굵기가 어차피 두 단뿐이기 때문이다 —
+       맑은 고딕만 있는 PC 에서는 600~900 이 모두 같은 Bold 로 스냅되고,
+       Pretendard 가 한 굵기만 깔린 PC 에서는 600 이상이 전부 같은 합성 굵기가 된다.
+       650 과 750 을 나눠 적어도 화면에서는 갈리지 않는다.
+       위계는 크기·색·여백으로 낸다. */
+
     /* 글자 크기는 여섯 단만 쓴다. 스물네 가지가 섞여 있으면
        무엇이 중요한지 크기로 읽히지 않는다. */
     --t-xs:.74rem;    /* 꼬리표 · 단위 */
@@ -88,8 +95,8 @@
     background:var(--surface); border-bottom:1px solid var(--rule);
   }
   /* 상단 바는 크롬이다. --t-xl 은 기록 제목(지금 보는 학생) 전용으로 남긴다. */
-  .brand{ font-weight:800; letter-spacing:-.03em; font-size:var(--t-lg); flex:none; }
-  .brand small{ display:block; font-size:var(--t-xs); font-weight:500; color:var(--muted); letter-spacing:0; line-height:1.2; }
+  .brand{ font-weight:700; letter-spacing:-.03em; font-size:var(--t-lg); flex:none; }
+  .brand small{ display:block; font-size:var(--t-xs); font-weight:400; color:var(--muted); letter-spacing:0; line-height:1.2; }
   .filechip{
     display:flex; align-items:center; gap:9px; min-width:0;
     background:var(--bg); border:1px solid var(--rule); border-radius:99px;
@@ -109,7 +116,7 @@
      크게 눈에 들면서, 그 위 본문색 글자가 9.8:1 로 넉넉히 읽힌다.
      금빛을 글자로 쓰면 종이 위에서 1.5:1 이라 못 쓴다 — 그래서 칠 쪽에 둔 것이다. */
   .btn{
-    font-size:var(--t-md); font-family:inherit; font-weight:650; letter-spacing:.01em;
+    font-size:var(--t-md); font-family:inherit; font-weight:700; letter-spacing:.01em;
     color:var(--ink); background:var(--accent-lite); border:1px solid var(--accent-lite);
     border-radius:3px; padding:9px 18px; cursor:pointer;
     transition:background .15s,border-color .15s;
@@ -117,7 +124,7 @@
   .btn:hover:not(:disabled){ background:var(--accent-hot); border-color:var(--accent-hot); color:var(--ink); }
   .btn:disabled{ opacity:.45; cursor:not-allowed; }
   .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
-  .btn.ghost{ background:transparent; color:var(--ink-2); border-color:var(--rule-2); font-weight:500; }
+  .btn.ghost{ background:transparent; color:var(--ink-2); border-color:var(--rule-2); font-weight:400; }
   .btn.ghost:hover:not(:disabled){ background:var(--surface-2); color:var(--ink); }
   .btn.sm{ padding:5px 12px; font-size:var(--t-sm); }
   .btn.xs{ padding:3px 10px; font-size:var(--t-xs); border-radius:99px; }
@@ -151,7 +158,7 @@
     padding:clamp(28px,5vw,56px) clamp(16px,4vw,28px) 80px;
     display:flex; flex-direction:column; gap:var(--s5);
   }
-  .setup h1{ margin:0; font-size:clamp(1.4rem,3.4vw,1.9rem); font-weight:800; letter-spacing:-.03em; }
+  .setup h1{ margin:0; font-size:clamp(1.4rem,3.4vw,1.9rem); font-weight:700; letter-spacing:-.03em; }
   .setup .sub{ margin:0; color:var(--ink-2); font-size:var(--t-lg); }
 
   .step{ display:flex; flex-direction:column; gap:13px; }
@@ -172,7 +179,7 @@
   }
   .drop:hover,.drop.over{ border-color:var(--accent); background:var(--accent-soft); }
   .drop:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
-  .drop .big{ font-weight:650; font-size:var(--t-lg); }
+  .drop .big{ font-weight:700; font-size:var(--t-lg); }
   .drop .sm{ font-size:var(--t-md); color:var(--muted); }
 
   textarea{
@@ -208,12 +215,12 @@
     display:flex; flex-direction:column; gap:var(--s2);
   }
   /* 큰 숫자는 모래 칠 위에 놓이므로 한 단 짙은 판을 쓴다 — 기본 강조색은 여기서 3.8:1 이다 */
-  .live .big{ font-size:var(--t-hero); font-weight:750; letter-spacing:-.03em; line-height:1.1; color:var(--accent-2); }
-  .live .big em{ font-style:normal; font-size:var(--t-sm); font-weight:600; color:var(--ink-2);
+  .live .big{ font-size:var(--t-hero); font-weight:700; letter-spacing:-.03em; line-height:1.1; color:var(--accent-2); }
+  .live .big em{ font-style:normal; font-size:var(--t-sm); font-weight:700; color:var(--ink-2);
                  letter-spacing:0; margin-left:5px; }
   .live .rows{ display:flex; flex-direction:column; gap:var(--s1); font-size:var(--t-sm); color:var(--ink-2); }
   .live .rows div{ display:flex; justify-content:space-between; gap:10px; }
-  .live .rows b{ font-weight:650; }
+  .live .rows b{ font-weight:700; }
   /* 같은 반끼리 겹침은 다른 지표와 성격이 다르다 — 유일하게 조치가 정해진 신호라
      같은 목록에 섞지 않고 따로 세운다. */
   .live .alarm{
@@ -225,7 +232,7 @@
 
   .knob{ display:flex; flex-direction:column; gap:6px; }
   .knob .top{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
-  .knob .top label{ font-size:var(--t-md); font-weight:600; }
+  .knob .top label{ font-size:var(--t-md); font-weight:700; }
   .knob .top output{ font-size:var(--t-lg); font-weight:700; color:var(--accent); }
   .knob input[type="range"]{ width:100%; accent-color:var(--accent); margin:0; }
   .knob .hint{ font-size:var(--t-xs); color:var(--muted); line-height:1.5; }
@@ -249,7 +256,7 @@
   .knob .top output:empty{ display:none; }
 
   details.more{ border-top:1px solid var(--rule); padding-top:13px; }
-  details.more > summary{ cursor:pointer; font-size:var(--t-sm); font-weight:600; color:var(--ink-2); }
+  details.more > summary{ cursor:pointer; font-size:var(--t-sm); font-weight:700; color:var(--ink-2); }
   details.more .in{ display:flex; flex-direction:column; gap:13px; padding-top:13px; }
 
   /* 중 · 명단 */
@@ -269,9 +276,9 @@
   .row-item:hover{ background:var(--surface-2); }
   .row-item[aria-current="true"]{ background:var(--accent-soft); box-shadow:inset 3px 0 0 var(--accent); }
   .row-item .l1{ display:flex; justify-content:space-between; align-items:baseline; gap:var(--s2); }
-  .row-item .who{ font-size:var(--t-md); font-weight:600; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .row-item .who{ font-size:var(--t-md); font-weight:700; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .row-item[aria-current="true"] .who{ color:var(--accent); }
-  .row-item .pc{ font-size:var(--t-sm); font-weight:600; flex:none; color:var(--muted); }
+  .row-item .pc{ font-size:var(--t-sm); font-weight:700; flex:none; color:var(--muted); }
   .row-item .bar{ height:4px; border-radius:99px; background:var(--surface-2); margin-top:6px; overflow:hidden; }
   .row-item .bar i{ display:block; height:100%; background:var(--muted); border-radius:99px; }
   .row-item.mid .pc{ color:var(--warn); }
@@ -283,7 +290,7 @@
                  font-size:var(--t-xs); color:var(--muted); }
   .row-item .l2:empty{ display:none; }
   .row-item .tag{ background:var(--warn-soft); color:var(--danger);
-                  border-radius:99px; padding:1px 8px; font-weight:650; }
+                  border-radius:99px; padding:1px 8px; font-weight:700; }
   .row-item .dot{ color:var(--accent); font-weight:700; }
   /* 고른 줄은 바탕이 밝아져 muted 가 4.5:1 을 못 넘는다. 거기서만 한 단 올린다.
      심각도 색(warn·danger)은 이 바탕에서도 기준을 넘으므로 건드리지 않는다. */
@@ -296,7 +303,7 @@
   .view{ background:var(--bg); }
   .tabs{ display:flex; gap:2px; }
   .tab{
-    font-family:inherit; font-size:var(--t-md); font-weight:600; color:var(--muted);
+    font-family:inherit; font-size:var(--t-md); font-weight:700; color:var(--muted);
     background:none; border:none; border-bottom:2px solid transparent;
     padding:6px 12px; cursor:pointer; border-radius:3px 3px 0 0;
   }
@@ -307,7 +314,7 @@
 
   /* 이름 → 생존 분량 → 나머지. 세 단이 크기와 색으로 구분되게 둔다. */
   .doc-title{ display:flex; align-items:baseline; gap:var(--s3); flex-wrap:wrap; }
-  .doc-title h3{ margin:0; font-size:var(--t-xl); font-weight:750; letter-spacing:-.03em; }
+  .doc-title h3{ margin:0; font-size:var(--t-xl); font-weight:700; letter-spacing:-.03em; }
   /* 성한 값은 여기서도 조용히 둔다. 명단은 회색인데 여기만 초록이면
      같은 뜻이 자리마다 다른 색으로 보인다. */
   .doc-title .alive{ font-size:var(--t-md); font-weight:700; color:var(--muted);
@@ -341,11 +348,11 @@
   .bytes.over .track i{ background:var(--danger); }
   .bytes.over b{ color:var(--danger); }
   .bytes b{ font-variant-numeric:tabular-nums;
-            font-family:ui-monospace,Consolas,monospace; font-weight:650; }
+            font-family:ui-monospace,Consolas,monospace; font-weight:700; }
 
   #editArea{ min-height:230px; font-size:var(--t-lg); line-height:1.95; }
   .edited-badge{ background:var(--accent-soft); color:var(--accent);
-                 border-radius:99px; padding:1px 8px; font-size:var(--t-xs); font-weight:600; }
+                 border-radius:99px; padding:1px 8px; font-size:var(--t-xs); font-weight:700; }
 
   /* 관계망 — 3D. 점이 많으면 SVG로는 매 프레임 다시 못 그려 캔버스를 쓴다. */
   .netwrap{ position:relative; background:var(--surface); border:1px solid var(--rule);
@@ -357,7 +364,7 @@
     position:absolute; top:10px; right:10px; z-index:4; display:flex; gap:6px;
   }
   .netbar .btn{ background:var(--surface); color:var(--ink-2); border-color:var(--rule-2);
-                font-weight:500; box-shadow:var(--shadow); }
+                font-weight:400; box-shadow:var(--shadow); }
   .netbar .btn:hover{ background:var(--surface-2); color:var(--ink); }
   .nettip{
     position:absolute; z-index:5; pointer-events:none; max-width:220px;
@@ -390,7 +397,7 @@
   .card.r1 > h4::before{ background:var(--danger); }
   .card.r2 > h4::before{ background:var(--warn); }
   .card.r3{ background:none; }
-  .card.r3 > h4{ color:var(--muted); font-weight:650; }
+  .card.r3 > h4{ color:var(--muted); font-weight:700; }
   .card .note{ padding:11px 16px; font-size:var(--t-sm); color:var(--muted); line-height:1.65;
                border-bottom:1px solid var(--rule); }
   .phrase{ display:flex; gap:var(--s3); justify-content:space-between; align-items:flex-start;
@@ -399,7 +406,7 @@
   .phrase > div:first-child{ flex:1; min-width:0; }
   .phrase > button{ flex:none; }
   .phrase .mine{ font-size:var(--t-xs); background:var(--accent-soft); color:var(--accent);
-                 border-radius:99px; padding:1px 8px; margin-left:7px; font-weight:650;
+                 border-radius:99px; padding:1px 8px; margin-left:7px; font-weight:700;
                  white-space:nowrap; }
   .phrase .c{ flex:none; font-family:ui-monospace,Consolas,monospace; font-size:var(--t-sm);
               background:var(--rule-2); color:var(--ink-2); border-radius:2px; padding:2px 8px; }
@@ -410,7 +417,7 @@
   .tablewrap{ overflow-x:auto; border:1px solid var(--rule); border-radius:4px; background:var(--surface); }
   table{ border-collapse:collapse; width:100%; font-size:var(--t-md); }
   th,td{ padding:8px 12px; text-align:left; border-bottom:1px solid var(--rule); white-space:nowrap; }
-  th{ background:var(--surface-2); font-weight:650; font-size:var(--t-xs); letter-spacing:.04em; color:var(--ink-2); }
+  th{ background:var(--surface-2); font-weight:700; font-size:var(--t-xs); letter-spacing:.04em; color:var(--ink-2); }
   tbody tr{ cursor:pointer; }
   tbody tr:hover{ background:var(--surface-2); }
   td.n{ text-align:right; font-variant-numeric:tabular-nums;
@@ -423,7 +430,7 @@
      지우지는 않되 접어 두고, 대신 한 줄짜리 요점만 늘 보이게 한다. */
   details.help{ border-top:1px solid var(--rule); padding-top:var(--s3); }
   details.help > summary{
-    cursor:pointer; font-size:var(--t-sm); font-weight:600; color:var(--muted);
+    cursor:pointer; font-size:var(--t-sm); font-weight:700; color:var(--muted);
     list-style:none; display:inline-flex; align-items:center; gap:7px;
   }
   details.help > summary::-webkit-details-marker{ display:none; }
@@ -438,7 +445,7 @@
   details.help .foot{ margin:0; }
   /* 접혀 있어도 놓치면 안 되는 한 줄 */
   .lede{ font-size:var(--t-sm); color:var(--ink-2); line-height:1.7; max-width:78ch; margin:0; }
-  .lede b{ font-weight:650; }
+  .lede b{ font-weight:700; }
 
   /* ── 단계 전환 ───────────────────────────────────────── */
   body[data-phase="setup"] .work,
@@ -486,7 +493,7 @@
   .cmp-head .spacer{ flex:1; }
   .cmp-q{ padding:10px 16px; border-bottom:1px solid var(--rule);
           font-size:var(--t-sm); color:var(--ink-2); line-height:1.7; }
-  .cmp-q b{ font-weight:650; }
+  .cmp-q b{ font-weight:700; }
   .cmp-row{
     display:grid; grid-template-columns:minmax(96px,auto) 1fr auto; gap:var(--s3);
     align-items:start; padding:11px 16px; border-bottom:1px solid var(--rule);
@@ -495,9 +502,9 @@
   .cmp-row:last-child{ border-bottom:none; }
   .cmp-row.me{ background:var(--accent-soft); }
   .cmp-who{ display:flex; flex-direction:column; gap:3px; }
-  .cmp-who b{ font-weight:650; white-space:nowrap; }
+  .cmp-who b{ font-weight:700; white-space:nowrap; }
   .cmp-who .tag{ font-size:var(--t-xs); background:var(--warn-soft); color:var(--danger);
-                 border-radius:99px; padding:0 8px; font-weight:650; align-self:flex-start; }
+                 border-radius:99px; padding:0 8px; font-weight:700; align-self:flex-start; }
   .cmp-who .self{ font-size:var(--t-xs); color:var(--muted); }
   .cmp-txt{ line-height:1.85; min-width:0; }
   .cmp-txt em{ font-style:normal; color:var(--muted); }
@@ -521,7 +528,7 @@
   .ft-txt > b{ font-size:var(--t-md); }
   .ft-txt > span{ font-size:var(--t-sm); color:var(--ink-2); line-height:1.65; }
   .sampleflag{
-    flex:none; font-size:var(--t-xs); font-weight:650; white-space:nowrap;
+    flex:none; font-size:var(--t-xs); font-weight:700; white-space:nowrap;
     background:var(--markA-bg); color:var(--markA-ink);
     border-radius:99px; padding:4px 12px;
   }
@@ -552,11 +559,11 @@
   .tour-step .bar{ flex:1; height:3px; border-radius:99px; background:var(--surface-2); overflow:hidden; }
   .tour-step .bar i{ display:block; height:100%; background:var(--accent); border-radius:99px;
                      transition:width .22s ease; }
-  .tour-box h3{ margin:0; font-size:var(--t-lg); font-weight:750; letter-spacing:-.02em; }
+  .tour-box h3{ margin:0; font-size:var(--t-lg); font-weight:700; letter-spacing:-.02em; }
   .tour-box > div:not(.tour-step):not(.tour-act){
     font-size:var(--t-sm); color:var(--ink-2); line-height:1.75;
   }
-  .tour-box b{ color:var(--ink); font-weight:650; }
+  .tour-box b{ color:var(--ink); font-weight:700; }
   .tour-act{ display:flex; align-items:center; gap:var(--s2); margin-top:var(--s1); }
   .tour-act .spacer{ flex:1; }
   @media (prefers-reduced-motion:reduce){
@@ -2049,8 +2056,8 @@ function renderDoc(){
   const list = [...p.peers.entries()].sort((a,b) => b[1] - a[1]).slice(0, 24);
   $('#peerBox').innerHTML =
     `<div style="display:flex;flex-direction:column;gap:8px">
-      <div style="font-size:var(--t-md);font-weight:650">겹치는 학생 ${p.peers.size}명${
-        p.sameCls ? ` <span style="color:var(--danger);font-weight:600">· 같은 반 ${p.sameCls}명</span>` : ''}</div>
+      <div style="font-size:var(--t-md);font-weight:700">겹치는 학생 ${p.peers.size}명${
+        p.sameCls ? ` <span style="color:var(--danger);font-weight:700">· 같은 반 ${p.sameCls}명</span>` : ''}</div>
       <div class="peers">${list.map(([v,c]) =>
         `<button class="peer${r.cls && rows[v].cls === r.cls ? ' same' : ''}" data-i="${v}">${
           escapeHtml(rows[v].label)}${c > 1 ? ` <span class="num">${c}곳</span>` : ''}</button>`).join('')}</div>
@@ -2429,7 +2436,7 @@ function renderTable(){
       <td class="n">${(p.aRate*100).toFixed(0)}%</td>
       <td class="n">${(p.bRate*100).toFixed(0)}%</td>
       <td class="n">${p.maxN || '—'}</td>
-      <td class="n"${p.sameCls ? ' style="color:var(--danger);font-weight:650"' : ''}>${p.sameCls || '—'}</td>
+      <td class="n"${p.sameCls ? ' style="color:var(--danger);font-weight:700"' : ''}>${p.sameCls || '—'}</td>
     </tr>`;
   }).join('');
   $('#tableBody').querySelectorAll('tr').forEach(tr =>

@@ -55,10 +55,13 @@
       background-image:radial-gradient(820px 400px at 88% -10%, #ffe0ac 0%, rgba(255,224,172,0) 62%),
                        radial-gradient(700px 360px at -8% 0%, #ffeccd 0%, rgba(255,236,205,0) 60%);
       background-attachment:fixed;background-repeat:no-repeat}
-    /* 굵기는 400 과 700 만 쓴다.
-       학교 PC 에는 Pretendard 가 거의 없어서 실제로는 맑은 고딕이 그려진다.
-       맑은 고딕에는 Regular 와 Bold 뿐이라 600·800·900 은 브라우저가 지어낸 가짜 굵기다 —
-       획이 뭉개져서 밝은 바탕에서 특히 지저분해 보인다. 위계는 크기·색·여백으로 낸다. */
+    /* 굵기는 400 과 700 두 단만 쓴다.
+       화면에 실제로 나타나는 굵기가 어차피 두 단뿐이기 때문이다.
+       맑은 고딕만 있는 PC 에서는 600~900 이 모두 같은 진짜 Bold 로 스냅되고,
+       Pretendard 가 한 굵기(Medium)만 깔린 PC 에서는 600 이상이 전부 같은
+       합성 굵기가 된다 — 이쪽은 획이 뭉개진다.
+       650 과 800 을 나눠 적어도 화면에서는 갈리지 않으니, 코드에만 있는 구분이다.
+       위계는 크기·색·여백으로 낸다. */
     strong,b,th,h1,h2,h3{font-weight:700}
     button,input,textarea,select{font:inherit;font-weight:400}
     /* 숫자가 흔들리면 206행짜리 표에서 눈이 피로해진다 */
