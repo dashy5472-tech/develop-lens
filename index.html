@@ -7,33 +7,46 @@
 <style>
   :root{
     /* ── 맑은 아침 ────────────────────────────────────────────
-       버터 바탕 · 남색 강조 · 노랑과 아쿠아로 겹침 표시 · 주황 주의.
+       바탕·표면·칠은 사전 점검기(check/index.html)와 같은 값을 쓴다.
+       두 도구를 나란히 열었을 때 한 짝으로 보여야 하기 때문이다.
+
+       다만 **강조는 남색 그대로 둔다.** 점검기의 퍼시몬(#C2410C)을 그대로
+       가져와 재 보니 주의(#A75B12)와 색각 이상에서 ΔE 1.1 로 붙어 버린다
+       (정상 시야에서도 6.8). 이 앱에서 주황은 이미 주의가, 노랑은 겹침 표시가,
+       빨강은 경고가 쓰고 있다. 파랑이 유일하게 비어 있는 자리다.
+       강조와 주의는 ΔE 24.0 으로 갈라져 있어야 '고른 줄'과 '주의 단계'가
+       같은 줄에 나란히 있어도 섞이지 않는다.
+
+       대신 **칠 쪽으로 맞췄다.** 단추 바탕(accent-lite)을 점검기와 같은
+       금빛 #FFC43D 로 바꿨다. 칠은 글자와 겹치지 않아 주의와 부딪히지 않고,
+       그 위에 진한 본문색이 9.8:1 로 올라간다. 누르기 전 금빛, 올리면 감귤 —
+       점검기의 단추와 같은 움직임이다.
+
        #FFF4B8 · #BEFAF4 는 쓰는 이가 고른 색이라 그대로 둔다. 색각 이상에서
        ΔE 8.0 으로 갈라지는 유일한 짝이라 겹침 표시 두 자리에 이 둘을 놓았다.
+       주의·경고도 그대로다 — 색상이 아니라 **밝기**로 갈라 두었다.
+       색각 이상에서 주황과 빨강은 거의 같은 색이 되기 때문이다.
 
        accent-soft 와 accent-fill 은 성격이 달라 나눠 두었다.
-       선택된 줄에는 주의·경고 숫자가 올라가므로 밝아야 하고(그래서 종이와 ΔE 4.2),
-       요약 블록에는 강조와 보조만 올라가므로 훨씬 진해도 된다(ΔE 15.3).
+       선택된 줄에는 주의·경고 숫자가 올라가므로 밝아야 하고,
+       요약 블록에는 강조와 보조만 올라가므로 훨씬 진해도 된다.
        하나로 묶어 두면 밝은 쪽에 맞춰야 해서 요약 블록이 종이에 묻힌다.
        파스텔은 칠과 바탕에만 쓴다. 글자와 선은 같은 색의 깊은 판이다 —
        흰 바탕에서 4.5:1 을 넘으려면 어두워야 하고, 파스텔은 정의상 밝기 때문이다.
-       주의와 경고는 색상이 아니라 **밝기**로 갈라 두었다. 색각 이상에서
-       주황과 빨강은 거의 같은 색이 되므로 색상만으로는 구분되지 않는다.
-       #93BEF0 은 종이 위에서 1.9:1 이라 글자로 못 쓴다. 대신 칠로 쓰면 진한 글자가
-       잘 올라가므로(8.5:1) 버튼 바탕(accent-lite)으로 두고, 글자·선에는 같은 색조
-       212° 를 지킨 짙은 판(accent)을 쓴다.
+
        값은 _test_color.js · _test_cvd.js 로 검증한다.
        어두운 화면 판은 두지 않는다 — 안 고쳐진 채 남으면 어긋나기 때문이다. */
-    --bg:#FDF7E3; --surface:#FFFEFA; --surface-2:#F3EBD2;
-    --ink:#241F14; --ink-2:#4E4736; --muted:#726A57;
-    --rule:#EEE5CB; --rule-2:#DACFAD;
-    --accent:#186ED2; --accent-2:#145EB3; --accent-lite:#93BEF0;
-    --accent-soft:#ECF4FC; --accent-fill:#F0E7CE;
+    --bg:#FFFAF0; --surface:#FFFFFF; --surface-2:#FFF3E3;
+    --ink:#2E2118; --ink-2:#4E4736; --muted:#726A57;
+    --rule:#F2E3CE; --rule-2:#E4D2BA;
+    --accent:#186ED2; --accent-2:#145EB3;
+    --accent-lite:#FFC43D; --accent-hot:#FF8A3D;
+    --accent-soft:#FFF3E6; --accent-fill:#FFE8D2;
     --warn:#A75B12; --warn-soft:#FBE6CB;
     --markA-bg:#FFF4B8; --markA-ink:#6B5410;
     --markB-bg:#BEFAF4; --markB-ink:#10555E;
     --danger:#9E2F24;
-    --shadow:0 1px 2px rgba(45,35,20,.06), 0 8px 24px -14px rgba(45,35,20,.22);
+    --shadow:0 2px 4px rgba(96,54,20,.05), 0 12px 26px rgba(150,84,30,.11);
     --topbar:56px;
 
     /* 밝은 화면 한 벌로만 간다. color-scheme 을 고정하지 않으면 운영체제가
@@ -93,15 +106,15 @@
 
   /* ── 버튼·입력 공통 ──────────────────────────────────── */
   /* 단추는 연한 하늘색 칠에 진한 글자를 올린다. 이 칠은 종이와 ΔE 22.6 이라
-     크게 눈에 들면서, 그 위 본문색 글자가 8.5:1 로 넉넉히 읽힌다.
-     같은 색을 글자로 쓰면 1.9:1 이라 못 쓴다 — 그래서 칠 쪽에 둔 것이다. */
+     크게 눈에 들면서, 그 위 본문색 글자가 9.8:1 로 넉넉히 읽힌다.
+     금빛을 글자로 쓰면 종이 위에서 1.5:1 이라 못 쓴다 — 그래서 칠 쪽에 둔 것이다. */
   .btn{
     font-size:var(--t-md); font-family:inherit; font-weight:650; letter-spacing:.01em;
     color:var(--ink); background:var(--accent-lite); border:1px solid var(--accent-lite);
     border-radius:3px; padding:9px 18px; cursor:pointer;
     transition:background .15s,border-color .15s;
   }
-  .btn:hover:not(:disabled){ background:var(--accent); border-color:var(--accent); color:var(--surface); }
+  .btn:hover:not(:disabled){ background:var(--accent-hot); border-color:var(--accent-hot); color:var(--ink); }
   .btn:disabled{ opacity:.45; cursor:not-allowed; }
   .btn:focus-visible{ outline:2px solid var(--accent); outline-offset:2px; }
   .btn.ghost{ background:transparent; color:var(--ink-2); border-color:var(--rule-2); font-weight:500; }
