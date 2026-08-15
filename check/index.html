@@ -217,6 +217,9 @@
     .batch-export-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}
     .pdf-export-option{display:flex;align-items:center;gap:7px;min-height:44px;padding:8px 12px;border:1px solid var(--edge);border-radius:11px;background:#fff;color:var(--muted);font-size:.78rem;cursor:pointer}
     .pdf-export-option input{width:18px;height:18px;margin:0;accent-color:var(--brand)}
+    .pdf-scope{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+    .pdf-scope-label{color:var(--muted);font-size:.78rem;white-space:nowrap;margin-right:2px}
+    .pdf-scope .pdf-export-option{padding:8px 10px;gap:6px}
     /* 표는 조용해야 한다 — 오래 읽는 자리다 */
     /* ── 명단 | 상세 ──
        고른 학생을 표 바로 옆에서 읽는다. 상세가 표 아래에 있으면 둘을 동시에
@@ -279,7 +282,7 @@
       .detail-empty{min-height:180px}
     }
     @media(max-width:900px){.app-shell{width:min(100% - 20px,1320px);margin-top:10px}.top-header{grid-template-columns:1fr}.header-side{align-items:flex-start}.trust-bar{grid-template-columns:1fr}.trust-item+ .trust-item{border-left:0;border-top:1px solid var(--hair)}.workflow{grid-template-columns:repeat(2,1fr)}.flow-card:nth-child(2)::after{display:none}.summary{grid-template-columns:repeat(2,1fr)}.status-card{grid-column:1/-1}.batch-config{grid-template-columns:repeat(2,1fr)}}
-    @media(max-width:560px){.app-shell{width:100%;margin:0;padding:10px}.top-header{padding:2px 2px 12px;gap:10px}.brand-wrap{gap:11px}.school-logo{width:66px;height:66px}h1{font-size:1.65rem}.title-kicker{font-size:.8rem}.title-sub{font-size:.78rem}.creator{font-size:.68rem;white-space:normal}.date-card{min-width:0;width:100%}.workflow{grid-template-columns:1fr}.flow-card::after{display:none!important}.card,.panel{border-radius:16px}.card-head,.card-body,.panel{padding-left:14px;padding-right:14px}.buttons{display:grid;grid-template-columns:1fr 1fr}button.primary{grid-column:1/-1;min-width:0}.summary,.batch-summary{grid-template-columns:1fr 1fr;gap:8px}.summary-card{min-height:90px;padding:12px}.issue dl{grid-template-columns:1fr}.result-actions{width:100%;flex-wrap:wrap}.detail-nav{flex:1 1 100%;justify-content:flex-start;margin-right:0}.result-actions>button{flex:1 1 auto}.panel-head{align-items:flex-start;flex-wrap:wrap}.batch-config{grid-template-columns:1fr}.batch-toolbar{align-items:stretch;flex-direction:column}.batch-export-actions{display:grid;grid-template-columns:1fr;width:100%}.batch-toolbar select,.batch-toolbar button,.pdf-export-option{width:100%}}
+    @media(max-width:560px){.app-shell{width:100%;margin:0;padding:10px}.top-header{padding:2px 2px 12px;gap:10px}.brand-wrap{gap:11px}.school-logo{width:66px;height:66px}h1{font-size:1.65rem}.title-kicker{font-size:.8rem}.title-sub{font-size:.78rem}.creator{font-size:.68rem;white-space:normal}.date-card{min-width:0;width:100%}.workflow{grid-template-columns:1fr}.flow-card::after{display:none!important}.card,.panel{border-radius:16px}.card-head,.card-body,.panel{padding-left:14px;padding-right:14px}.buttons{display:grid;grid-template-columns:1fr 1fr}button.primary{grid-column:1/-1;min-width:0}.summary,.batch-summary{grid-template-columns:1fr 1fr;gap:8px}.summary-card{min-height:90px;padding:12px}.issue dl{grid-template-columns:1fr}.result-actions{width:100%;flex-wrap:wrap}.detail-nav{flex:1 1 100%;justify-content:flex-start;margin-right:0}.result-actions>button{flex:1 1 auto}.panel-head{align-items:flex-start;flex-wrap:wrap}.batch-config{grid-template-columns:1fr}.batch-toolbar{align-items:stretch;flex-direction:column}.batch-export-actions{display:grid;grid-template-columns:1fr;width:100%}.batch-toolbar select,.batch-toolbar button,.pdf-export-option{width:100%}.pdf-scope{width:100%}.pdf-scope .pdf-export-option{width:auto;flex:1 1 auto}}
     /* 화면 인쇄 — 배경 그라디언트는 토너만 먹는다 */
     @media print{body{background:#fff;background-image:none}.app-shell{width:100%;margin:0}.workflow,.result-actions,.buttons,.site-footer{display:none!important}.panel,.trust-bar{box-shadow:none;break-inside:avoid}h1{-webkit-text-fill-color:currentColor;color:#9a3412}}
     @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}button:hover:not(:disabled){transform:none}}
@@ -369,7 +372,7 @@
       <div id="batchStatus" class="batch-status" role="status"></div>
       <div id="batchResults" class="batch-results" hidden>
         <div id="batchSummary" class="batch-summary"></div>
-        <div class="batch-toolbar"><select id="batchFilter" aria-label="결과 필터"><option value="all">전체 항목</option><option value="error">오류 있는 항목</option><option value="review">주의·개선 확인 항목</option><option value="clear">명확한 위반 미발견</option></select><div class="batch-export-actions"><label class="pdf-export-option" for="includeClearInPdf"><input id="includeClearInPdf" type="checkbox">명확한 위반 미발견 항목도 PDF에 포함</label><button id="exportBatchButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-download"/></svg><span class="btn-label">결과 Excel 저장</span></button><button id="exportBatchPdfButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">학생별 PDF 저장·인쇄</span></button></div></div>
+        <div class="batch-toolbar"><select id="batchFilter" aria-label="결과 필터"><option value="all">전체 항목</option><option value="error">오류 있는 항목</option><option value="review">주의·개선 확인 항목</option><option value="clear">명확한 위반 미발견</option></select><div class="batch-export-actions"><span class="pdf-scope" role="group" aria-label="PDF에 넣을 등급"><span class="pdf-scope-label">PDF에 넣을 등급</span><label class="pdf-export-option" for="pdfError"><input id="pdfError" type="checkbox" checked>오류</label><label class="pdf-export-option" for="pdfWarning"><input id="pdfWarning" type="checkbox" checked>주의</label><label class="pdf-export-option" for="pdfImprovement"><input id="pdfImprovement" type="checkbox" checked>개선</label><label class="pdf-export-option" for="includeClearInPdf"><input id="includeClearInPdf" type="checkbox">무결</label></span><button id="exportBatchButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-download"/></svg><span class="btn-label">결과 Excel 저장</span></button><button id="exportBatchPdfButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">학생별 PDF 저장·인쇄</span></button></div></div>
         <div class="workbench">
         <div id="tableWrap" class="table-wrap"><table class="batch-table"><thead><tr><th>반/번호</th><th>성명</th><th>과목</th><th>상태</th><th>오류</th><th>주의</th><th>개선</th></tr></thead><tbody id="batchTableBody"></tbody></table></div>
         <div id="detailPane" class="detail-pane">
@@ -664,7 +667,7 @@ let openIndex = -1;          // 지금 상세를 열어 둔 학생 (batchResults
 let visibleOrder = [];       // 지금 표에 보이는 순서 — 이전·다음은 이 순서를 따른다
 
 document.addEventListener('DOMContentLoaded', () => {
-  ['copyButton','printButton','resultSection','highlightSection','detailSection','totalCount','errorCount','warningCount','improvementCount','finalStatus','resultMessage','highlightedText','results','excelDropZone','excelFile','batchFileLabel','batchConfig','sheetSelect','headerRowInput','classNumberColumnSelect','nameColumnSelect','subjectColumnSelect','recordColumnSelect','runBatchButton','resetBatchButton','batchStatus','batchResults','batchSummary','batchFilter','includeClearInPdf','exportBatchButton','exportBatchPdfButton','batchTableBody',
+  ['copyButton','printButton','resultSection','highlightSection','detailSection','totalCount','errorCount','warningCount','improvementCount','finalStatus','resultMessage','highlightedText','results','excelDropZone','excelFile','batchFileLabel','batchConfig','sheetSelect','headerRowInput','classNumberColumnSelect','nameColumnSelect','subjectColumnSelect','recordColumnSelect','runBatchButton','resetBatchButton','batchStatus','batchResults','batchSummary','batchFilter','includeClearInPdf','pdfError','pdfWarning','pdfImprovement','exportBatchButton','exportBatchPdfButton','batchTableBody',
 'prevStudentButton','nextStudentButton','closeDetailButton','detailPosition','tableWrap',
 'detailPane','detailEmpty','detailBar',
 'batchReadout','readoutTag','readoutSheet','readoutRecords','readoutSubjects','readoutJoined','readoutBreaks','readoutNote','manualMap'].forEach(id => els[id] = document.getElementById(id));
@@ -1166,18 +1169,50 @@ function exportBatchWorkbook() {
   XLSX.writeFile(workbook, '세특_사전점검_결과_' + stamp + '.xlsx', { compression:true });
 }
 
+/* PDF 에 넣을 기록을 고른다. 고른 등급이 하나라도 들어 있으면 넣는다.
+   한 기록에 오류와 주의가 같이 있으면 둘 중 아무 쪽만 골라도 들어온다 —
+   '오류만 먼저 고치겠다' 는 쓰임에서 그 기록을 빼면 안 되기 때문이다.
+   무결은 등급이 아니라 등급이 하나도 없는 상태라 따로 본다. */
+function pickPdfItems(want) {
+  return batchResults.filter(item => {
+    const c = item.analysis.counts;
+    return (want.error && c.error > 0)
+        || (want.warning && c.warning > 0)
+        || (want.improvement && c.improvement > 0)
+        || (want.clear && item.status === 'clear');
+  });
+}
+
+/* 고른 등급을 사람 말로. PDF 머리에 무엇을 담았는지 적어 둔다. */
+function pdfScopeLabel(want) {
+  const on = [];
+  if (want.error) on.push('오류');
+  if (want.warning) on.push('주의');
+  if (want.improvement) on.push('개선 권고');
+  if (want.clear) on.push('명확한 위반 미발견');
+  return on.join(' · ');
+}
+
 function exportBatchPdf() {
   if (!batchResults.length) {
     els.batchStatus.textContent = '먼저 학생·과목별 일괄 점검을 실행해 주세요.';
     return;
   }
-  const includeClear = Boolean(els.includeClearInPdf && els.includeClearInPdf.checked);
-  const printItems = includeClear
-    ? batchResults.slice()
-    : batchResults.filter(item => item.status !== 'clear');
+  const want = {
+    error: els.pdfError.checked,
+    warning: els.pdfWarning.checked,
+    improvement: els.pdfImprovement.checked,
+    clear: Boolean(els.includeClearInPdf && els.includeClearInPdf.checked)
+  };
+  if (!want.error && !want.warning && !want.improvement && !want.clear) {
+    els.batchStatus.textContent = 'PDF에 넣을 등급을 하나 이상 골라 주세요.';
+    return;
+  }
+  const includeClear = want.clear;
+  const printItems = pickPdfItems(want);
   const excludedCount = batchResults.length - printItems.length;
   if (!printItems.length) {
-    els.batchStatus.textContent = 'PDF로 출력할 위반·확인 항목이 없습니다. 전체 결과가 필요하면 “명확한 위반 미발견 항목도 PDF에 포함”을 선택해 주세요.';
+    els.batchStatus.textContent = '고른 등급(' + pdfScopeLabel(want) + ')에 해당하는 기록이 없습니다. 등급을 다시 골라 주세요.';
     return;
   }
   const printWindow = window.open('', '_blank');
@@ -1188,7 +1223,8 @@ function exportBatchPdf() {
   const html = buildBatchPrintHtml(printItems, {
     totalCount:batchResults.length,
     excludedCount:excludedCount,
-    includeClear:includeClear
+    includeClear:includeClear,
+    scope:pdfScopeLabel(want)
   });
   printWindow.document.open();
   printWindow.document.write(html);
@@ -1218,7 +1254,8 @@ function buildBatchPrintHtml(items, printMeta) {
   const excludedCount = Number.isFinite(meta.excludedCount) ? meta.excludedCount : Math.max(0, totalCount - items.length);
   const pages = items.map((item, index) => buildBatchPrintPage(item, index, items.length, printedAt, {
     totalCount:totalCount,
-    excludedCount:excludedCount
+    excludedCount:excludedCount,
+    scope:meta.scope
   })).join('');
   const documentTitle = meta.includeClear ? '세특_학생별_전체점검표_' : '세특_교차점검_필요항목_';
   return '<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">' +
@@ -1265,7 +1302,8 @@ function buildBatchPrintPage(item, index, total, printedAt, printMeta) {
   const totalCount = Number.isFinite(meta.totalCount) ? meta.totalCount : total;
   const excludedCount = Number.isFinite(meta.excludedCount) ? meta.excludedCount : Math.max(0, totalCount - total);
   const scopeHtml = index === 0
-    ? '<br><span class="scope-summary">전체 ' + totalCount.toLocaleString() + '건 · PDF 출력 ' + total.toLocaleString() + '건 · 제외 ' + excludedCount.toLocaleString() + '건</span>'
+    ? '<br><span class="scope-summary">전체 ' + totalCount.toLocaleString() + '건 · PDF 출력 ' + total.toLocaleString() + '건 · 제외 ' + excludedCount.toLocaleString() + '건' +
+        (meta.scope ? ' · 담은 등급 ' + escapeHtml(meta.scope) : '') + '</span>'
     : '';
   const statusText = { error:'수정 필요', review:'확인 필요', clear:'명확한 위반 미발견' };
   const statusClass = item.status === 'clear' ? 'clear' : 'status';
@@ -1394,6 +1432,9 @@ function resetBatch(clearFile = true) {
   els.batchTableBody.innerHTML = '';
   els.batchSummary.innerHTML = '';
   if (els.includeClearInPdf) els.includeClearInPdf.checked = false;
+  if (els.pdfError) els.pdfError.checked = true;
+  if (els.pdfWarning) els.pdfWarning.checked = true;
+  if (els.pdfImprovement) els.pdfImprovement.checked = true;
   if (clearFile) els.excelFile.value = '';
   clearDetail();
 }

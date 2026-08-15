@@ -46,6 +46,7 @@ const window = { requestAnimationFrame(){ return 0; }, setTimeout(){ return 0; }
 const app = new Function(
   'document','window','XLSX','navigator','location','requestAnimationFrame','setTimeout','clearTimeout','console',
   APP + '\n;return { analyzeText, getBatchStatus, toClassNumber, foundLabel, exportBatchWorkbook, buildBatchPrintHtml,' +
+        '\n         pickPdfItems, pdfScopeLabel,' +
         '\n         setResults: value => { batchResults = value; } };'
 )(document, window, xlsxForApp, { userAgent:'node' }, { href:'' }, () => 0, () => 0, () => {}, console);
 
@@ -108,10 +109,36 @@ ok('탐지 표현이 빈칸으로 나가는 항목이 없다', blankLabels.lengt
   blankLabels.length + '건 (' + [...new Set(blankLabels.map(i => i.id))].join(', ') + ')');
 ok('무결 항목은 그렇게 적힌다', body.some(r => String(r[9]) === '명확한 위반 미발견'));
 
+console.log('■ PDF 에 넣을 등급 고르기');
+/* 한 기록에 여러 등급이 섞여 있으므로, 고른 등급이 하나라도 들어 있으면 넣는다.
+   숫자는 실제 파일에서 세어 비교한다 — 손으로 적어 두면 규칙이 바뀔 때 같이 안 바뀐다. */
+const has = (item, key) => item.analysis.counts[key] > 0;
+const countIf = fn => results.filter(fn).length;
+const ALL_OFF = { error:false, warning:false, improvement:false, clear:false };
+const pick = over => app.pickPdfItems(Object.assign({}, ALL_OFF, over)).length;
+
+ok('오류만 고르면 오류가 든 것만', pick({ error:true }) === countIf(r => has(r, 'error')),
+  pick({ error:true }) + ' / ' + countIf(r => has(r, 'error')));
+ok('주의만', pick({ warning:true }) === countIf(r => has(r, 'warning')));
+ok('개선만', pick({ improvement:true }) === countIf(r => has(r, 'improvement')));
+ok('무결만', pick({ clear:true }) === countIf(r => r.status === 'clear'));
+ok('오류+주의는 둘 중 하나라도 든 것 (겹치는 것을 두 번 세지 않는다)',
+  pick({ error:true, warning:true }) === countIf(r => has(r, 'error') || has(r, 'warning')),
+  pick({ error:true, warning:true }) + ' / ' + countIf(r => has(r, 'error') || has(r, 'warning')));
+ok('셋 다 고르면 예전 기본값과 같다 (무결 아닌 것 전부)',
+  pick({ error:true, warning:true, improvement:true }) === countIf(r => r.status !== 'clear'),
+  pick({ error:true, warning:true, improvement:true }) + ' / ' + countIf(r => r.status !== 'clear'));
+ok('넷 다 고르면 전부', pick({ error:true, warning:true, improvement:true, clear:true }) === results.length);
+ok('하나도 안 고르면 없음', pick({}) === 0);
+ok('고른 등급을 말로 적는다',
+  app.pdfScopeLabel({ error:true, warning:false, improvement:true, clear:false }) === '오류 · 개선 권고',
+  app.pdfScopeLabel({ error:true, warning:false, improvement:true, clear:false }));
+
 console.log('■ 학생별 PDF');
 const flagged = results.filter(item => item.status !== 'clear');
 const html = app.buildBatchPrintHtml(flagged, {
-  totalCount:results.length, excludedCount:results.length - flagged.length, includeClear:false
+  totalCount:results.length, excludedCount:results.length - flagged.length, includeClear:false,
+  scope:'오류 · 주의 · 개선 권고'
 });
 ok('HTML 이 나온다', typeof html === 'string' && html.length > 1000, typeof html);
 ok('학생 수만큼 쪽이 나온다',
@@ -121,6 +148,7 @@ ok('교차점검 확인란이 들어간다', /교차점검 확인/.test(html));
 ok('세특 원문 자리가 있다', /세특 원문/.test(html));
 ok('줄바꿈을 ↵ 로 보여 준다', html.indexOf('↵') !== -1);
 ok('인쇄 안내가 들어간다', /PDF로 저장/.test(html));
+ok('머리에 담은 등급을 적는다', /담은 등급 오류 · 주의 · 개선 권고/.test(html));
 ok('닫히지 않은 태그로 끝나지 않는다', /<\/html>\s*$/.test(html));
 
 console.log('\n  Excel 207줄 · PDF ' + flagged.length + '쪽 (무결 ' + (results.length - flagged.length) + '건 제외)');
