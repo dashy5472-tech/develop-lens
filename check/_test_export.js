@@ -151,6 +151,47 @@ ok('인쇄 안내가 들어간다', /PDF로 저장/.test(html));
 ok('머리에 담은 등급을 적는다', /담은 등급 오류 · 주의 · 개선 권고/.test(html));
 ok('닫히지 않은 태그로 끝나지 않는다', /<\/html>\s*$/.test(html));
 
+console.log('■ 고른 등급의 항목만 찍기');
+/* 쪽은 그대로 나오되 그 안의 항목만 걸러진다.
+   원문 표시와 아래 목록이 같은 배열에서 나와야 번호가 어긋나지 않는다. */
+const errItems = results.filter(item => item.analysis.counts.error > 0);
+const allOnErrPages = errItems.reduce((n, item) => n + item.analysis.issues.length, 0);
+const errOnly = errItems.reduce((n, item) =>
+  n + item.analysis.issues.filter(i => i.severity === 'error').length, 0);
+
+const meta = { totalCount:results.length, excludedCount:results.length - errItems.length, includeClear:false,
+               scope:'오류' };
+const htmlAll = app.buildBatchPrintHtml(errItems, meta);
+const htmlOnly = app.buildBatchPrintHtml(errItems, Object.assign({}, meta, { onlyGrades:['error'] }));
+
+const labels = html => (html.match(/class="issue-label">\[\d+\] ([^<]+)</g) || [])
+  .map(m => m.replace(/.*\] /, '').replace('<', ''));
+const pages = html => (html.match(/class="student-page/g) || []).length;
+
+ok('쪽 수는 그대로다', pages(htmlOnly) === pages(htmlAll) && pages(htmlOnly) === errItems.length,
+  pages(htmlOnly) + ' / ' + errItems.length);
+ok('안 걸렀을 때는 항목이 전부 나온다', labels(htmlAll).length === allOnErrPages,
+  labels(htmlAll).length + ' / ' + allOnErrPages);
+ok('걸렀을 때는 오류만 나온다', labels(htmlOnly).length === errOnly,
+  labels(htmlOnly).length + ' / ' + errOnly);
+ok('주의·개선 딱지가 하나도 없다', labels(htmlOnly).every(t => t === '오류'),
+  [...new Set(labels(htmlOnly))].join(', '));
+/* 쪽마다 적힌 '숨긴 항목 N건' 을 다 더하면 실제로 뺀 수와 같아야 한다.
+   여기가 어긋나면 종이가 거짓말을 하는 것이라 그냥 넘길 수 없다. */
+const hiddenOnPaper = (htmlOnly.match(/숨긴 항목 <b>([\d,]+)건<\/b>/g) || [])
+  .reduce((sum, m) => sum + Number(m.replace(/\D/g, '')), 0);
+ok('쪽에 적힌 숨긴 수의 합이 실제와 같다', hiddenOnPaper === allOnErrPages - errOnly,
+  hiddenOnPaper + ' / ' + (allOnErrPages - errOnly));
+ok('무엇만 실었는지 적는다', /이 종이에는 <b>오류<\/b> 항목만 실었습니다/.test(htmlOnly));
+ok('안 걸렀으면 그런 안내가 없다', htmlAll.indexOf('항목만 실었습니다') === -1);
+/* 번호는 1부터 빠짐없이 이어져야 한다 — 거른 뒤 다시 매기지 않으면 [3][7] 처럼 튄다 */
+const firstPage = htmlOnly.slice(0, htmlOnly.indexOf('class="student-page', 40));
+const nums = (firstPage.match(/class="issue-label">\[(\d+)\]/g) || []).map(m => +m.replace(/\D/g, ''));
+ok('번호가 1부터 이어진다', nums.every((n, i) => n === i + 1), nums.join(','));
+ok('범례에 안 실린 등급은 안 나온다',
+  firstPage.indexOf('key-color warning') === -1 && firstPage.indexOf('key-color improvement') === -1);
+
 console.log('\n  Excel 207줄 · PDF ' + flagged.length + '쪽 (무결 ' + (results.length - flagged.length) + '건 제외)');
+console.log('  오류만 찍기 — ' + errItems.length + '쪽, 항목 ' + allOnErrPages + ' → ' + errOnly + '건');
 console.log('\n' + (fail === 0 ? '전체 통과' : '실패 ' + fail + '건') + ' (통과 ' + pass + ')');
 process.exit(fail === 0 ? 0 : 1);
