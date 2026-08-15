@@ -40,6 +40,7 @@
       --imp:#1256b8;  --imp-wash:#e7efff;  --imp-edge:#c6d9f7;
       --ok:#0f6b4f;   --ok-wash:#e3f7ee;   --ok-edge:#b4e4cf;
       --radius:20px; --radius-sm:14px;
+      --pane-h:min(72vh,720px);   /* 명단·상세 두 칸의 키 */
       --shadow:0 2px 4px rgba(96,54,20,.05), 0 12px 26px rgba(150,84,30,.11);
       --lift:0 4px 9px rgba(96,54,20,.08), 0 18px 36px rgba(150,84,30,.18);
       /* 옛 이름은 별칭으로 남긴다 — 부르는 데가 흩어져 있다 */
@@ -69,7 +70,9 @@
       {font-variant-numeric:tabular-nums}
     :where(a,button,summary,input,select,textarea,[tabindex]):focus-visible{
       outline:3px solid var(--brand);outline-offset:2px;border-radius:6px}
-    .app-shell{width:min(1320px,calc(100% - 34px));margin:22px auto 36px}
+    /* 2단으로 나누면 1,320px 로는 오른쪽 상세가 한 줄 45자까지 좁아진다.
+       학교 PC 는 대개 그보다 넓으니 넓은 화면에서는 판을 더 쓴다. */
+    .app-shell{width:min(1560px,calc(100% - 34px));margin:22px auto 36px}
 
     /* ── 아이콘 ──
        색은 currentColor 를 따라간다. 글자 옆에 붙는 아이콘은 뜻을 옆 글자가
@@ -215,12 +218,44 @@
     .pdf-export-option{display:flex;align-items:center;gap:7px;min-height:44px;padding:8px 12px;border:1px solid var(--edge);border-radius:11px;background:#fff;color:var(--muted);font-size:.78rem;cursor:pointer}
     .pdf-export-option input{width:18px;height:18px;margin:0;accent-color:var(--brand)}
     /* 표는 조용해야 한다 — 오래 읽는 자리다 */
-    /* 표에 상한을 둔다. 206행이면 표만 8,000px 이 넘어서, 그 아래 상세 결과는
-       무슨 수를 써도 화면 밖 저 멀리 놓인다. 머리글은 이미 sticky 라 그대로 붙어 있다. */
-    .table-wrap{overflow:auto;max-height:min(58vh,560px);border:1px solid var(--hair);border-radius:var(--radius-sm);background:#fff}
-    .batch-table{width:100%;border-collapse:collapse;min-width:1120px;background:#fff}
-    .batch-table th{position:sticky;top:0;z-index:1;padding:12px 10px;background:#ffeedc;color:var(--brand);font-size:.8rem;text-align:center;white-space:nowrap;border-bottom:1px solid var(--brand-edge)}
-    .batch-table td{padding:11px 10px;border-top:1px solid var(--hair);font-size:.84rem;text-align:center}
+    /* ── 명단 | 상세 ──
+       고른 학생을 표 바로 옆에서 읽는다. 상세가 표 아래에 있으면 둘을 동시에
+       볼 수 없고, 읽는 폭이 1,300px 까지 벌어져 한 줄 90자가 된다 (권장 60~75자).
+       그래서 명단은 훑는 데 필요한 것만 두고, 남은 폭을 상세에 준다. */
+    .workbench{display:grid;grid-template-columns:clamp(392px,30%,460px) minmax(0,1fr);gap:16px;align-items:start}
+    .table-wrap{overflow:auto;max-height:var(--pane-h);border:1px solid var(--hair);border-radius:var(--radius-sm);background:#fff}
+    .detail-pane{overflow:auto;max-height:var(--pane-h);padding-right:4px}
+    .detail-pane .panel{margin-top:14px;box-shadow:none}
+    .detail-pane .panel:first-of-type{margin-top:0}
+    .detail-pane .summary{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+    /* 이름표 칸을 130 → 104px. 좁은 칸에서 26px 은 본문 두 글자만큼이다. */
+    .detail-pane .issue dl{grid-template-columns:104px minmax(0,1fr)}
+    .detail-pane .summary-card{min-height:88px;padding:12px}
+    .detail-pane .summary-card strong{font-size:1.6rem}
+    .detail-empty{display:grid;place-items:center;align-content:center;gap:8px;min-height:300px;padding:28px;
+      border:1px dashed var(--brand-edge);border-radius:var(--radius-sm);background:var(--soft);color:var(--muted);text-align:center}
+    .detail-empty[hidden]{display:none}
+    /* 항목을 읽어 내려가도 이전·다음이 따라온다. 상세 칸이 스스로 구르므로
+       이 띠만 위에 붙여 두면 된다. */
+    .detail-bar{position:sticky;top:0;z-index:3;display:flex;flex-wrap:wrap;justify-content:space-between;
+      align-items:center;gap:10px;margin:0 0 12px;padding:10px 2px 11px;background:var(--card);
+      border-bottom:1px solid var(--hair)}
+    .detail-bar[hidden]{display:none}
+    .detail-bar h2{margin:0;font-size:1.06rem}
+    .detail-empty .ic{width:34px;height:34px;color:var(--brand-edge)}
+    .batch-table{width:100%;border-collapse:collapse;background:#fff}
+    .batch-table th{position:sticky;top:0;z-index:1;padding:10px 7px;background:#ffeedc;color:var(--brand);font-size:.78rem;text-align:center;white-space:nowrap;border-bottom:1px solid var(--brand-edge)}
+    .batch-table td{padding:9px 7px;border-top:1px solid var(--hair);font-size:.82rem;text-align:center}
+    .batch-table tbody tr{cursor:pointer}
+    .batch-table td.n{width:1%;white-space:nowrap;color:var(--muted)}
+    .batch-table td.n.hot{color:var(--err);font-weight:700}
+    /* 성명 칸은 진짜 단추다 — 자판과 읽어 주기로도 고를 수 있어야 한다 */
+    .batch-table td.name{padding:0}
+    .row-open{display:block;width:100%;min-height:0;padding:9px 7px;border:0;border-radius:0;
+      background:transparent;color:inherit;font-weight:700;text-align:left}
+    /* 줄을 누를 수 있다는 걸 알려 준다 — '상세 보기' 단추를 없앤 자리다 */
+    .row-open:hover:not(:disabled){transform:none;box-shadow:none;background:transparent;text-decoration:underline}
+    .batch-table tbody tr:hover .row-open{text-decoration:underline}
     .batch-table tbody tr:nth-child(even){background:#fffdf8}
     .batch-table tbody tr:hover{background:#fff1e2}
     .batch-table td.name{text-align:left;font-weight:700}
@@ -231,10 +266,18 @@
     .batch-table tbody tr.is-open td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
     .detail-nav{display:flex;align-items:center;gap:6px;margin-right:6px}
     .detail-nav .pos{color:var(--muted);font-size:.78rem;font-variant-numeric:tabular-nums;white-space:nowrap}
-    .status-pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:.72rem;font-weight:700}
+    .status-pill{display:inline-block;white-space:nowrap;padding:4px 8px;border-radius:999px;font-size:.72rem;font-weight:700}
     .status-pill.error{background:var(--err-wash);color:var(--err)}.status-pill.review{background:var(--warn-wash);color:var(--warn)}.status-pill.clear{background:var(--ok-wash);color:var(--ok)}
     .detail-button{min-height:36px;padding:6px 12px;font-size:.76rem}
 
+    /* 1,180px 아래에서는 좌우로 나눌 자리가 안 나온다. 위아래로 쌓는다. */
+    @media(max-width:1180px){
+      .workbench{grid-template-columns:minmax(0,1fr)}
+      .detail-pane{max-height:none;overflow:visible;padding-right:0}
+      .table-wrap{max-height:min(48vh,420px)}
+      .detail-pane .panel:first-of-type{margin-top:14px}
+      .detail-empty{min-height:180px}
+    }
     @media(max-width:900px){.app-shell{width:min(100% - 20px,1320px);margin-top:10px}.top-header{grid-template-columns:1fr}.header-side{align-items:flex-start}.trust-bar{grid-template-columns:1fr}.trust-item+ .trust-item{border-left:0;border-top:1px solid var(--hair)}.workflow{grid-template-columns:repeat(2,1fr)}.flow-card:nth-child(2)::after{display:none}.summary{grid-template-columns:repeat(2,1fr)}.status-card{grid-column:1/-1}.batch-config{grid-template-columns:repeat(2,1fr)}}
     @media(max-width:560px){.app-shell{width:100%;margin:0;padding:10px}.top-header{padding:2px 2px 12px;gap:10px}.brand-wrap{gap:11px}.school-logo{width:66px;height:66px}h1{font-size:1.65rem}.title-kicker{font-size:.8rem}.title-sub{font-size:.78rem}.creator{font-size:.68rem;white-space:normal}.date-card{min-width:0;width:100%}.workflow{grid-template-columns:1fr}.flow-card::after{display:none!important}.card,.panel{border-radius:16px}.card-head,.card-body,.panel{padding-left:14px;padding-right:14px}.buttons{display:grid;grid-template-columns:1fr 1fr}button.primary{grid-column:1/-1;min-width:0}.summary,.batch-summary{grid-template-columns:1fr 1fr;gap:8px}.summary-card{min-height:90px;padding:12px}.issue dl{grid-template-columns:1fr}.result-actions{width:100%;flex-wrap:wrap}.detail-nav{flex:1 1 100%;justify-content:flex-start;margin-right:0}.result-actions>button{flex:1 1 auto}.panel-head{align-items:flex-start;flex-wrap:wrap}.batch-config{grid-template-columns:1fr}.batch-toolbar{align-items:stretch;flex-direction:column}.batch-export-actions{display:grid;grid-template-columns:1fr;width:100%}.batch-toolbar select,.batch-toolbar button,.pdf-export-option{width:100%}}
     /* 화면 인쇄 — 배경 그라디언트는 토너만 먹는다 */
@@ -260,7 +303,8 @@
   <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 3.5v11"/><path d="M8 10.8l4 4 4-4"/><path d="M4 17.5V19a1.5 1.5 0 0 0 1.5 1.5h13A1.5 1.5 0 0 0 20 19v-1.5"/></symbol>
   <symbol id="i-chevron-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
   <symbol id="i-chevron-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
-  <symbol id="i-arrow-up" viewBox="0 0 24 24"><path d="M12 20V5"/><path d="M6 11l6-6 6 6"/></symbol>
+  <symbol id="i-arrow-left" viewBox="0 0 24 24"><path d="M20 12H5"/><path d="M11 18l-6-6 6-6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12"/><path d="M18 6L6 18"/></symbol>
   <symbol id="i-list" viewBox="0 0 24 24"><path d="M8.5 6.5h12M8.5 12h12M8.5 17.5h12"/><path d="M4 6.5h.01M4 12h.01M4 17.5h.01"/></symbol>
   <symbol id="i-clipboard" viewBox="0 0 24 24"><path d="M9 4.5H7.5A1.5 1.5 0 0 0 6 6v13.5A1.5 1.5 0 0 0 7.5 21h9a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H15"/><rect x="9" y="2.5" width="6" height="4" rx="1"/><path d="M9.5 11.5h5M9.5 15.5h5"/></symbol>
   <symbol id="i-clipboard-check" viewBox="0 0 24 24"><path d="M9 4.5H7.5A1.5 1.5 0 0 0 6 6v13.5A1.5 1.5 0 0 0 7.5 21h9a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H15"/><rect x="9" y="2.5" width="6" height="4" rx="1"/><path d="M9.4 13.4l1.9 1.9 3.4-3.7"/></symbol>
@@ -326,20 +370,30 @@
       <div id="batchResults" class="batch-results" hidden>
         <div id="batchSummary" class="batch-summary"></div>
         <div class="batch-toolbar"><select id="batchFilter" aria-label="결과 필터"><option value="all">전체 항목</option><option value="error">오류 있는 항목</option><option value="review">주의·개선 확인 항목</option><option value="clear">명확한 위반 미발견</option></select><div class="batch-export-actions"><label class="pdf-export-option" for="includeClearInPdf"><input id="includeClearInPdf" type="checkbox">명확한 위반 미발견 항목도 PDF에 포함</label><button id="exportBatchButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-download"/></svg><span class="btn-label">결과 Excel 저장</span></button><button id="exportBatchPdfButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">학생별 PDF 저장·인쇄</span></button></div></div>
-        <div id="tableWrap" class="table-wrap"><table class="batch-table"><thead><tr><th>원본 행</th><th>반/번호</th><th>성명</th><th>과목</th><th>상태</th><th>전체</th><th>오류</th><th>주의</th><th>개선</th><th>세특 미리보기</th><th>결과</th></tr></thead><tbody id="batchTableBody"></tbody></table></div>
+        <div class="workbench">
+        <div id="tableWrap" class="table-wrap"><table class="batch-table"><thead><tr><th>반/번호</th><th>성명</th><th>과목</th><th>상태</th><th>오류</th><th>주의</th><th>개선</th></tr></thead><tbody id="batchTableBody"></tbody></table></div>
+        <div id="detailPane" class="detail-pane">
+          <div id="detailEmpty" class="detail-empty">
+            <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg>
+            <strong>왼쪽 명단에서 학생을 고르세요</strong>
+            <small>고른 학생의 탐지 항목이 여기에 나옵니다.</small>
+          </div>
+          <div id="detailBar" class="detail-bar" hidden>
+            <div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard-check"/></svg></span><h2 id="summaryTitle">점검 결과 요약</h2></div><div class="result-actions"><span class="detail-nav"><button id="prevStudentButton" class="detail-button" type="button" aria-label="이전 학생"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-chevron-left"/></svg></button><span id="detailPosition" class="pos">- / -</span><button id="nextStudentButton" class="detail-button" type="button" aria-label="다음 학생"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg></button><button id="closeDetailButton" class="detail-button" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-x"/></svg><span class="btn-label">닫기</span></button></span><button id="copyButton" type="button" disabled><svg class="ic ic-copy" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg><svg class="ic ic-done" aria-hidden="true" focusable="false"><use href="#i-check-circle"/></svg><span class="btn-label">결과 복사</span></button><button id="printButton" type="button" disabled><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">인쇄하기</span></button></div>
+          </div>
+      <section id="resultSection" class="panel" aria-labelledby="summaryTitle">
+        <div class="summary"><div class="summary-card"><span>전체 탐지 건수</span><strong id="totalCount">0</strong><span>건</span></div><div class="summary-card summary-error"><span>오류</span><strong id="errorCount">0</strong><span>건</span></div><div class="summary-card summary-warning"><span>주의</span><strong id="warningCount">0</strong><span>건</span></div><div class="summary-card summary-improve"><span>개선 권고</span><strong id="improvementCount">0</strong><span>건</span></div><div class="summary-card status-card"><span>최종 상태</span><strong id="finalStatus">확인 필요</strong><span>교사 최종 확인 필수</span></div></div>
+        <p id="resultMessage" class="result-message">이 앱의 결과는 사전 점검을 위한 참고 자료이며, 최종 기재 가능 여부는 최신 학교생활기록부 기재요령과 학교 담당자의 확인을 거쳐야 합니다.</p>
+      </section>
+
+      <section id="highlightSection" class="panel" hidden aria-labelledby="highlightTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-highlighter"/></svg></span><h2 id="highlightTitle">문장별 문제 표현 표시</h2></div></div><div class="legend"><span class="le">오류</span><span class="lw">주의</span><span class="li">개선 권고</span></div><div id="highlightedText" class="highlight-box"></div></section>
+
+      <section id="detailSection" class="panel" aria-labelledby="detailTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-list"/></svg></span><h2 id="detailTitle">세부 점검 결과</h2></div><strong id="detailCountLabel" style="font-size:.82rem;color:#63513e">총 0건</strong></div><div id="results" class="results"><div class="empty"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard"/></svg><br><strong style="margin-top:10px">표에서 ‘상세 보기’ 를 누르면 여기에 표시됩니다.</strong><small>학생·과목 한 건의 탐지 항목을 자세히 볼 수 있습니다.</small></div></div></section>
+        </div>
+        </div>
       </div>
     </div>
   </section>
-
-  <section id="resultSection" class="panel" hidden aria-labelledby="summaryTitle">
-    <div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard-check"/></svg></span><h2 id="summaryTitle">점검 결과 요약</h2></div><div class="result-actions"><span class="detail-nav"><button id="prevStudentButton" class="detail-button" type="button" aria-label="이전 학생"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-chevron-left"/></svg></button><span id="detailPosition" class="pos">- / -</span><button id="nextStudentButton" class="detail-button" type="button" aria-label="다음 학생"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg></button><button id="closeDetailButton" class="detail-button" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arrow-up"/></svg><span class="btn-label">표로</span></button></span><button id="copyButton" type="button" disabled><svg class="ic ic-copy" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg><svg class="ic ic-done" aria-hidden="true" focusable="false"><use href="#i-check-circle"/></svg><span class="btn-label">결과 복사</span></button><button id="printButton" type="button" disabled><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">인쇄하기</span></button></div></div>
-    <div class="summary"><div class="summary-card"><span>전체 탐지 건수</span><strong id="totalCount">0</strong><span>건</span></div><div class="summary-card summary-error"><span>오류</span><strong id="errorCount">0</strong><span>건</span></div><div class="summary-card summary-warning"><span>주의</span><strong id="warningCount">0</strong><span>건</span></div><div class="summary-card summary-improve"><span>개선 권고</span><strong id="improvementCount">0</strong><span>건</span></div><div class="summary-card status-card"><span>최종 상태</span><strong id="finalStatus">확인 필요</strong><span>교사 최종 확인 필수</span></div></div>
-    <p id="resultMessage" class="result-message">이 앱의 결과는 사전 점검을 위한 참고 자료이며, 최종 기재 가능 여부는 최신 학교생활기록부 기재요령과 학교 담당자의 확인을 거쳐야 합니다.</p>
-  </section>
-
-  <section id="highlightSection" class="panel" hidden aria-labelledby="highlightTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-highlighter"/></svg></span><h2 id="highlightTitle">문장별 문제 표현 표시</h2></div></div><div class="legend"><span class="le">오류</span><span class="lw">주의</span><span class="li">개선 권고</span></div><div id="highlightedText" class="highlight-box"></div></section>
-
-  <section id="detailSection" class="panel" hidden aria-labelledby="detailTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-list"/></svg></span><h2 id="detailTitle">세부 점검 결과</h2></div><strong id="detailCountLabel" style="font-size:.82rem;color:#63513e">총 0건</strong></div><div id="results" class="results"><div class="empty"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard"/></svg><br><strong style="margin-top:10px">표에서 ‘상세 보기’ 를 누르면 여기에 표시됩니다.</strong><small>학생·과목 한 건의 탐지 항목을 자세히 볼 수 있습니다.</small></div></div></section>
 
   <section class="panel footer-note"><span class="footer-icon"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-alert-triangle"/></svg></span><div>탐지되지 않은 문장이 실제로 허용된다는 뜻은 아닙니다. 이름·기관명·맥락 판단은 오탐 또는 누락이 생길 수 있으므로 공식 지침과 담당자 확인이 필요합니다.</div></section>
   <footer class="site-footer"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-lock"/></svg> 이 페이지는 파일 한 장이 전부입니다. 올린 파일은 이 브라우저 안에서만 처리되며 저장되지도, 외부로 전송되지도 않습니다. 내려받아 인터넷을 끊고 열어도 그대로 동작합니다.<small>© 2026 강릉문성고등학교 · 학교생활기록부 기재요령 사전 점검기</small></footer>
@@ -612,6 +666,7 @@ let visibleOrder = [];       // 지금 표에 보이는 순서 — 이전·다�
 document.addEventListener('DOMContentLoaded', () => {
   ['copyButton','printButton','resultSection','highlightSection','detailSection','totalCount','errorCount','warningCount','improvementCount','finalStatus','resultMessage','highlightedText','results','excelDropZone','excelFile','batchFileLabel','batchConfig','sheetSelect','headerRowInput','classNumberColumnSelect','nameColumnSelect','subjectColumnSelect','recordColumnSelect','runBatchButton','resetBatchButton','batchStatus','batchResults','batchSummary','batchFilter','includeClearInPdf','exportBatchButton','exportBatchPdfButton','batchTableBody',
 'prevStudentButton','nextStudentButton','closeDetailButton','detailPosition','tableWrap',
+'detailPane','detailEmpty','detailBar',
 'batchReadout','readoutTag','readoutSheet','readoutRecords','readoutSubjects','readoutJoined','readoutBreaks','readoutNote','manualMap'].forEach(id => els[id] = document.getElementById(id));
 const todayLabel = document.getElementById('todayLabel');
 if (todayLabel) todayLabel.textContent = new Intl.DateTimeFormat('ko-KR', { year:'numeric', month:'2-digit', day:'2-digit', weekday:'short' }).format(new Date());
@@ -637,8 +692,8 @@ if (todayLabel) todayLabel.textContent = new Intl.DateTimeFormat('ko-KR', { year
   els.nextStudentButton.addEventListener('click', () => stepStudent(1));
   els.closeDetailButton.addEventListener('click', closeDetail);
   els.batchTableBody.addEventListener('click', event => {
-    const button = event.target.closest('[data-result-index]');
-    if (button) showBatchStudent(Number(button.dataset.resultIndex));
+    const row = event.target.closest('tr[data-index]');
+    if (row) showBatchStudent(Number(row.dataset.index));
   });
 });
 
@@ -993,18 +1048,22 @@ function renderBatchTable() {
   els.batchTableBody.innerHTML = filtered.length ? filtered.map(item => {
     const counts = item.analysis.counts;
     const preview = item.text ? item.text.replace(/\s+/g, ' ').slice(0, 110) : '세특 내용 없음';
+    /* 줄 전체가 누르는 자리다. 성명 칸만 진짜 단추로 둬서 자판·읽어 주기로도
+       고를 수 있게 한다 — 줄에 role 을 씌우는 것보다 이쪽이 확실하다.
+       원본 행·세특 원문은 오른쪽 상세에 그대로 있으니 명단에서는 뺀다. */
     return '<tr data-index="' + item.resultIndex + '"' +
-      (item.resultIndex === openIndex ? ' class="is-open"' : '') + '>' +
-      '<td>' + escapeHtml(item.rowNumber) + '</td>' +
+      (item.resultIndex === openIndex ? ' class="is-open"' : '') +
+      ' title="' + escapeAttr(preview) + '">' +
       '<td>' + escapeHtml(item.classNumber) + '</td>' +
-      '<td class="name">' + escapeHtml(item.name) + '</td>' +
+      '<td class="name"><button class="row-open" type="button" data-result-index="' + item.resultIndex + '">' +
+        escapeHtml(item.name) + '</button></td>' +
       '<td>' + escapeHtml(item.subject) + '</td>' +
       '<td><span class="status-pill ' + item.status + '">' + statusText[item.status] + '</span></td>' +
-      '<td>' + counts.total + '</td><td>' + counts.error + '</td><td>' + counts.warning + '</td><td>' + counts.improvement + '</td>' +
-      '<td class="preview" title="' + escapeAttr(preview) + '">' + escapeHtml(preview) + '</td>' +
-      '<td><button class="detail-button" type="button" data-result-index="' + item.resultIndex + '">상세 보기</button></td>' +
+      '<td class="n' + (counts.error ? ' hot' : '') + '">' + counts.error + '</td>' +
+      '<td class="n">' + counts.warning + '</td>' +
+      '<td class="n">' + counts.improvement + '</td>' +
       '</tr>';
-  }).join('') : '<tr><td colspan="11">선택한 조건에 해당하는 항목이 없습니다.</td></tr>';
+  }).join('') : '<tr><td colspan="7">선택한 조건에 해당하는 항목이 없습니다.</td></tr>';
 }
 
 function showBatchStudent(index) {
@@ -1012,8 +1071,11 @@ function showBatchStudent(index) {
   if (!item) return;
   openIndex = index;
   lastAnalysis = item.analysis;
+  els.detailEmpty.hidden = true;
+  els.detailBar.hidden = false;
   els.resultSection.hidden = false;
   els.detailSection.hidden = false;
+  els.detailPane.scrollTop = 0;   // 새 학생은 처음부터 읽는다
   document.getElementById('summaryTitle').textContent = item.classNumber + ' · ' + item.name + ' · ' + item.subject + ' 점검 결과';
   document.getElementById('highlightTitle').textContent = item.name + ' 문장별 문제 표현';
   document.getElementById('detailTitle').textContent = item.name + ' 세부 점검 결과';
@@ -1023,7 +1085,11 @@ function showBatchStudent(index) {
   /* block:'nearest' 라 이미 보이면 쪽이 아예 안 움직인다.
      예전에는 'start' 로 쪽 전체를 끌어내려서, 다음 학생을 보려면 표까지
      다시 올라가야 했다. */
-  els.resultSection.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  /* 2단에서는 상세가 이미 옆에 있으니 쪽을 움직일 일이 거의 없다.
+     좁아서 위아래로 쌓인 화면에서만 최소한으로 움직인다. */
+  if (!matchMedia('(min-width: 1180px)').matches) {
+    els.resultSection.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
 }
 
 /* 열어 둔 줄에 표시를 옮기고, 표 안에서만 그 줄을 보이게 한다.
@@ -1628,6 +1694,8 @@ function renderIssueCard(issue) {
 function clearDetail() {
   lastAnalysis = null;
   openIndex = -1;
+  if (els.detailEmpty) els.detailEmpty.hidden = false;
+  if (els.detailBar) els.detailBar.hidden = true;
   els.resultSection.hidden = true;
   els.highlightSection.hidden = true;
   els.detailSection.hidden = true;
