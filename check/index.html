@@ -374,26 +374,26 @@
       <div id="batchStatus" class="batch-status" role="status"></div>
       <div id="batchResults" class="batch-results" hidden>
         <div id="batchSummary" class="batch-summary"></div>
-        <div class="batch-toolbar"><select id="batchFilter" aria-label="결과 필터"><option value="all">전체 항목</option><option value="error">오류 있는 항목</option><option value="review">주의·개선 확인 항목</option><option value="clear">명확한 위반 미발견</option></select><div class="batch-export-actions"><span class="pdf-scope" role="group" aria-label="PDF에 넣을 등급"><span class="pdf-scope-label">PDF에 넣을 등급</span><label class="pdf-export-option" for="pdfError"><input id="pdfError" type="checkbox" checked>오류</label><label class="pdf-export-option" for="pdfWarning"><input id="pdfWarning" type="checkbox" checked>주의</label><label class="pdf-export-option" for="pdfImprovement"><input id="pdfImprovement" type="checkbox" checked>개선</label><label class="pdf-export-option" for="includeClearInPdf"><input id="includeClearInPdf" type="checkbox">무결</label><label class="pdf-export-option pdf-only" for="pdfIssuesOnly"><input id="pdfIssuesOnly" type="checkbox">고른 등급의 항목만 찍기</label></span><button id="exportBatchButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-download"/></svg><span class="btn-label">결과 Excel 저장</span></button><button id="exportBatchPdfButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">학생별 PDF 저장·인쇄</span></button></div></div>
+        <div class="batch-toolbar"><select id="batchFilter" aria-label="결과 필터"><option value="all">전체 항목</option><option value="error">오류 있는 항목</option><option value="review">주의·개선 확인 항목</option><option value="clear">명확한 위반 미발견</option></select><div class="batch-export-actions"><span class="pdf-scope" role="group" aria-label="PDF에 넣을 등급"><span class="pdf-scope-label">PDF에 넣을 등급</span><label class="pdf-export-option" for="pdfError"><input id="pdfError" type="checkbox" checked>오류</label><label class="pdf-export-option" for="pdfWarning"><input id="pdfWarning" type="checkbox" checked>주의</label><label class="pdf-export-option" for="pdfImprovement"><input id="pdfImprovement" type="checkbox" checked>개선</label><label class="pdf-export-option" for="includeClearInPdf"><input id="includeClearInPdf" type="checkbox">무결</label><label class="pdf-export-option pdf-only" for="pdfIssuesOnly"><input id="pdfIssuesOnly" type="checkbox">선택한 등급의 항목만 찍기</label></span><button id="exportBatchButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-download"/></svg><span class="btn-label">결과 Excel 저장</span></button><button id="exportBatchPdfButton" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">학생별 PDF 저장·인쇄</span></button></div></div>
         <div class="workbench">
         <div id="tableWrap" class="table-wrap"><table class="batch-table"><thead><tr><th>반/번호</th><th>성명</th><th>과목</th><th>상태</th><th>오류</th><th>주의</th><th>개선</th></tr></thead><tbody id="batchTableBody"></tbody></table></div>
         <div id="detailPane" class="detail-pane">
           <div id="detailEmpty" class="detail-empty">
             <svg class="ic" aria-hidden="true" focusable="false"><use href="#i-arrow-left"/></svg>
-            <strong>왼쪽 명단에서 학생을 고르세요</strong>
-            <small>고른 학생의 탐지 항목이 여기에 나옵니다.</small>
+            <strong>왼쪽 명단에서 학생을 선택하세요</strong>
+            <small>선택한 학생의 탐지 항목이 여기에 나옵니다.</small>
           </div>
           <div id="detailBar" class="detail-bar" hidden>
             <div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard-check"/></svg></span><h2 id="summaryTitle">점검 결과 요약</h2></div><div class="result-actions"><span class="detail-nav"><button id="prevStudentButton" class="detail-button" type="button" aria-label="이전 학생"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-chevron-left"/></svg></button><span id="detailPosition" class="pos">- / -</span><button id="nextStudentButton" class="detail-button" type="button" aria-label="다음 학생"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-chevron-right"/></svg></button><button id="closeDetailButton" class="detail-button" type="button"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-x"/></svg><span class="btn-label">닫기</span></button></span><button id="copyButton" type="button" disabled><svg class="ic ic-copy" aria-hidden="true" focusable="false"><use href="#i-copy"/></svg><svg class="ic ic-done" aria-hidden="true" focusable="false"><use href="#i-check-circle"/></svg><span class="btn-label">결과 복사</span></button><button id="printButton" type="button" disabled><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-printer"/></svg><span class="btn-label">인쇄하기</span></button></div>
           </div>
-      <section id="resultSection" class="panel" aria-labelledby="summaryTitle">
+      <section id="resultSection" class="panel" hidden aria-labelledby="summaryTitle">
         <div class="summary"><div class="summary-card"><span>전체 탐지 건수</span><strong id="totalCount">0</strong><span>건</span></div><div class="summary-card summary-error"><span>오류</span><strong id="errorCount">0</strong><span>건</span></div><div class="summary-card summary-warning"><span>주의</span><strong id="warningCount">0</strong><span>건</span></div><div class="summary-card summary-improve"><span>개선 권고</span><strong id="improvementCount">0</strong><span>건</span></div><div class="summary-card status-card"><span>최종 상태</span><strong id="finalStatus">확인 필요</strong><span>교사 최종 확인 필수</span></div></div>
         <p id="resultMessage" class="result-message">이 앱의 결과는 사전 점검을 위한 참고 자료이며, 최종 기재 가능 여부는 최신 학교생활기록부 기재요령과 학교 담당자의 확인을 거쳐야 합니다.</p>
       </section>
 
       <section id="highlightSection" class="panel" hidden aria-labelledby="highlightTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-highlighter"/></svg></span><h2 id="highlightTitle">문장별 문제 표현 표시</h2></div></div><div class="legend"><span class="le">오류</span><span class="lw">주의</span><span class="li">개선 권고</span></div><div id="highlightedText" class="highlight-box"></div></section>
 
-      <section id="detailSection" class="panel" aria-labelledby="detailTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-list"/></svg></span><h2 id="detailTitle">세부 점검 결과</h2></div><strong id="detailCountLabel" style="font-size:.82rem;color:#63513e">총 0건</strong></div><div id="results" class="results"><div class="empty"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard"/></svg><br><strong style="margin-top:10px">왼쪽 명단에서 학생을 고르면 여기에 표시됩니다.</strong><small>학생·과목 한 건의 탐지 항목을 자세히 볼 수 있습니다.</small></div></div></section>
+      <section id="detailSection" class="panel" hidden aria-labelledby="detailTitle"><div class="panel-head"><div class="title-wrap"><span class="step-badge"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-list"/></svg></span><h2 id="detailTitle">세부 점검 결과</h2></div><strong id="detailCountLabel" style="font-size:.82rem;color:#63513e">총 0건</strong></div><div id="results" class="results"><div class="empty"><svg class="ic" aria-hidden="true" focusable="false"><use href="#i-clipboard"/></svg><br><strong style="margin-top:10px">왼쪽 명단에서 학생을 선택하면 여기에 표시됩니다.</strong><small>학생·과목 한 건의 탐지 항목을 자세히 볼 수 있습니다.</small></div></div></section>
         </div>
         </div>
       </div>
@@ -828,7 +828,7 @@ function renderBatchReadout(sheetName) {
   if (parsed.error || !count) {
     tone = 'warn';
     notes.push('<b>자동으로 읽지 못했습니다.</b> ' + escapeHtml(parsed.error || '점검할 기록을 찾지 못했습니다.') +
-      ' 아래 <b>직접 지정</b>을 펼쳐 시트와 열을 골라 주세요.');
+      ' 아래 <b>직접 지정</b>을 펼쳐 시트와 열을 선택해 주세요.');
     els.manualMap.open = true;
   } else {
     if (parsed.joinedCount) {
@@ -1207,14 +1207,14 @@ function exportBatchPdf() {
     clear: Boolean(els.includeClearInPdf && els.includeClearInPdf.checked)
   };
   if (!want.error && !want.warning && !want.improvement && !want.clear) {
-    els.batchStatus.textContent = 'PDF에 넣을 등급을 하나 이상 골라 주세요.';
+    els.batchStatus.textContent = 'PDF에 넣을 등급을 하나 이상 선택해 주세요.';
     return;
   }
   const includeClear = want.clear;
   const printItems = pickPdfItems(want);
   const excludedCount = batchResults.length - printItems.length;
   if (!printItems.length) {
-    els.batchStatus.textContent = '고른 등급(' + pdfScopeLabel(want) + ')에 해당하는 기록이 없습니다. 등급을 다시 골라 주세요.';
+    els.batchStatus.textContent = '선택한 등급(' + pdfScopeLabel(want) + ')에 해당하는 기록이 없습니다. 등급을 다시 선택해 주세요.';
     return;
   }
   const printWindow = window.open('', '_blank');
