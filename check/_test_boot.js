@@ -68,7 +68,7 @@ if (domBoom) console.log('첫 화면 준비 중 멈춘 자리:\n  ' + domBoom.me
 chk('첫 화면 준비가 끝까지 간다', !!domReady && !domBoom);
 
 /* 손잡이. 뒤쪽까지 걸렸는지 봐야 중간에 멈춘 걸 잡는다. */
-const WIRED = ['recordText','checkButton','exampleButton','clearButton','copyButton','printButton',
+const WIRED = ['copyButton','printButton',
                'excelFile','excelDropZone','sheetSelect','headerRowInput',
                'classNumberColumnSelect','nameColumnSelect','subjectColumnSelect','recordColumnSelect',
                'runBatchButton','resetBatchButton','batchFilter',
