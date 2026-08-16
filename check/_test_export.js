@@ -98,9 +98,14 @@ ok('쪽 경계에서 이어 붙인 40건은 원본 행이 두 개다',
 ok('세특 원문의 줄바꿈이 살아 있다 (22건)',
   body.filter(r => String(r[10]).indexOf('\n') !== -1).length === 22,
   body.filter(r => String(r[10]).indexOf('\n') !== -1).length);
-ok('탐지 항목에 줄바꿈 안내가 들어간다',
-  body.filter(r => /줄바꿈/.test(String(r[9]))).length === 22,
+/* 줄바꿈 자체는 이제 잡지 않는다. 원문에는 그대로 남지만(위 검사) 탐지 항목에는
+   안 나온다. 나오는 것은 '띄어쓰기를 하고 줄을 바꾼' 한 자리뿐이다. */
+ok('줄바꿈만 있는 기록은 탐지 항목에 안 나온다',
+  body.filter(r => /줄바꿈/.test(String(r[9]))).length === 0,
   body.filter(r => /줄바꿈/.test(String(r[9]))).length);
+ok('띄어쓰고 줄바꾼 자리는 줄 앞뒤 공백으로 나간다',
+  body.filter(r => /줄 앞뒤 공백/.test(String(r[9]))).length === 1,
+  body.filter(r => /줄 앞뒤 공백/.test(String(r[9]))).length);
 /* 공백·줄바꿈을 잡은 항목이 빈칸으로 나가면 무엇을 잡았는지 알 수 없다.
    가운데점처럼 '·' 자체가 탐지 표현인 경우도 있으니, 눈에 보이는 글자냐만 본다. */
 const blankLabels = results.flatMap(item => item.analysis.issues)
@@ -146,7 +151,11 @@ ok('학생 수만큼 쪽이 나온다',
   (html.match(/class="student-page/g) || []).length);
 ok('교차점검 확인란이 들어간다', /교차점검 확인/.test(html));
 ok('세특 원문 자리가 있다', /세특 원문/.test(html));
-ok('줄바꿈을 ↵ 로 보여 준다', html.indexOf('↵') !== -1);
+/* ↵ 는 '표시된 구간 안에 줄바꿈이 들어 있을 때' 만 찍힌다. 줄바꿈 룰을 끈 뒤로는
+   줄바꿈을 표시하는 룰이 없으니 ↵ 도 안 나온다. 원문 자체는 pre-wrap 이라
+   종이에서도 줄이 그대로 바뀐다. */
+ok('줄바꿈 룰을 끈 뒤로는 ↵ 가 안 나온다', html.indexOf('↵') === -1);
+ok('줄 앞뒤 공백 항목은 종이에 실린다', /줄 앞뒤 공백/.test(html));
 ok('인쇄 안내가 들어간다', /PDF로 저장/.test(html));
 ok('머리에 담은 등급을 적는다', /담은 등급 오류 · 주의 · 개선 권고/.test(html));
 ok('닫히지 않은 태그로 끝나지 않는다', /<\/html>\s*$/.test(html));
