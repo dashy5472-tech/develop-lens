@@ -418,7 +418,21 @@ const CUSTOM_BANNED_TERMS = [
 const ENDING_ENGINE_V2 = {
   
   
-  allowedNominalEnding: /(?:함|됨|임|음|움|앎|삶|듦|끎|남|감|섬|냄|줌|킴|춤|룸|씀|봄|림|힘|김|탬|름|침|님|둠|눔|잼|핌|짐|꿈)$/u,
+  /* 명사형 종결은 '-(으)ㅁ' 이다. 그러니 마지막 글자의 종성이 ㅁ이면 명사형이다.
+     예전에는 함·됨·임… 서른두 자를 적어 두고 맞춰 봤다. 그런데 그 서른두 자는
+     결국 '종성이 ㅁ' 을 손으로 옮겨 적은 것이었고 — 하나도 예외가 없었다 —
+     낌·띔·셈·뺌·켬 같은 글자가 빠져 있었다. 실제 파일에서 '느낌' 2건과
+     '띔' 1건이 그렇게 헛걸렸다. 목록을 늘리는 대신 조건을 그대로 적는다.
+     겹받침 ㄻ(앎·삶·듦·끎)도 같이 본다.
+
+     이렇게 하면 '…한 프로그램.' 처럼 ㅁ으로 끝나는 보통 명사도 통과한다.
+     세특에서 드문 문장이고, 헛경고로 스물몇 곳을 울리는 쪽이 더 나쁘다. */
+  isNominalEnding(word) {
+    const code = word.charCodeAt(word.length - 1);
+    if (!(code >= 0xAC00 && code <= 0xD7A3)) return false;
+    const jongseong = (code - 0xAC00) % 28;
+    return jongseong === 16 || jongseong === 10;   // ㅁ, ㄻ
+  },
   politeEnding: /(?:습니다|ㅂ니다|합니다|입니다|되었습니다|됐습니다|보였습니다|하였습니다|세요|해요|이에요|예요|인가요|할게요|하겠습니다)$/u,
   conversationalEnding: /(?:요|네요|군요|나요|죠)$/u
 };
@@ -1627,7 +1641,7 @@ function checkSentenceEndings(text, issues) {
     const body = sentence.text.replace(/[.!?。]+$/g, '').trim();
     if (!body || !/[가-힣]$/u.test(body)) return;
     const lastWord = (body.match(/[가-힣]+$/u) || [''])[0];
-    if (!lastWord || ENDING_ENGINE_V2.allowedNominalEnding.test(lastWord)) return;
+    if (!lastWord || ENDING_ENGINE_V2.isNominalEnding(lastWord)) return;
     const polite = ENDING_ENGINE_V2.politeEnding.test(lastWord) || ENDING_ENGINE_V2.conversationalEnding.test(lastWord);
     const start = sentence.start + body.lastIndexOf(lastWord);
     addIssue(issues, {
